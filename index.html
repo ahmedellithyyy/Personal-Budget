@@ -1,0 +1,3752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ledger — Personal Finance</title>
+<meta name="description" content="Ledger — a personal finance app: budgets, activity, portfolio and a monthly dashboard.">
+<!-- Installable web app (Add to Home Screen) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#d8d2c2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ledger">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+/* ============ Design system: Classical (from _ds/.../styles.css) ============ */
+/* Classical — design-system tokens and component classes. This file is the source of truth for the system's look; retune it here and see readme.md. */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
+
+:root {
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-text: #201f1d;
+  --color-accent: #b68235;
+  --color-accent-2: #ac803e;
+  --color-divider: color-mix(in srgb, #201f1d 16%, transparent);
+
+  /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
+     same step of any role matches the others in visual value. */
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --color-accent-100: #fff3e4;
+  --color-accent-200: #ffe3bf;
+  --color-accent-300: #facb8d;
+  --color-accent-400: #e1ad66;
+  --color-accent-500: #c28d41;
+  --color-accent-600: #a06f24;
+  --color-accent-700: #7d5411;
+  --color-accent-800: #5a3b0a;
+  --color-accent-900: #3a270d;
+
+  --color-accent-2-100: #fff3e4;
+  --color-accent-2-200: #ffe3be;
+  --color-accent-2-300: #f5cd96;
+  --color-accent-2-400: #dbaf70;
+  --color-accent-2-500: #bc8f4e;
+  --color-accent-2-600: #9b7232;
+  --color-accent-2-700: #79561f;
+  --color-accent-2-800: #573d14;
+  --color-accent-2-900: #382810;
+
+  --font-heading: "Cormorant Garamond", system-ui, sans-serif;
+  --font-heading-weight: 600; /* review round 3: bold retired — semibold is the
+     interface headings' ceiling (they need the weight at small sizes); display
+     text goes lighter still, to the normal cut (see the deck) */
+  --font-body: "Lora", system-ui, sans-serif;
+
+  --space-1: 4.6px;
+  --space-2: 9.2px;
+  --space-3: 13.8px;
+  --space-4: 18.4px;
+  --space-6: 27.6px;
+  --space-8: 36.8px;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 7px;
+
+  /* Elevation — derived from the ground: soft ink-tinted shadows on a
+     light theme, a hairline edge + ambient darkness on a dark one. */
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); }
+
+.plate{filter:sepia(0.22) saturate(0.82) contrast(1.05);box-sizing:border-box;
+  border:6px solid var(--color-surface);outline:1px solid var(--color-divider)}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Components — built with the tokens above. Plain CSS
+   on plain HTML: no JavaScript, no build step. Each class is documented in
+   readme.md and demonstrated in foundations/ and components/.
+   ══════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-size: 15px; line-height: 1.55; font-weight: 400; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  line-height: 1.12; letter-spacing: -0.015em; margin: 0 0 var(--space-2);
+}
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 25px; }
+h4 { font-size: 20px; }
+h5 { font-size: 16px; }
+h6 { font-size: 13px; }
+h6 { letter-spacing: 0.08em; text-transform: uppercase; }
+p { margin: 0 0 var(--space-3); }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+img { display: block; max-width: 100%; }
+figure { margin: 0; }
+figcaption {
+  font-size: 11px; margin-top: var(--space-1);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+.text-muted { color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+
+/* — rules — */
+.hr {
+  height: 1px; border: 0; margin: var(--space-4) 0;
+  background: var(--color-divider);
+}
+
+/* — buttons — */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 14px; line-height: 1.2; color: var(--color-text); /* matches the .input's 14px —
+     the pair sits side by side in sign-up rows */
+  background: transparent; border: 1px solid transparent;
+  padding: var(--space-2) calc(var(--space-3) * 1.2);
+  border-radius: var(--radius-md);
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { color: var(--color-accent); border-color: var(--color-accent); }
+.btn-primary:hover { background: color-mix(in srgb, var(--color-accent) 12%, transparent); }
+.btn-primary:active { background: color-mix(in srgb, var(--color-accent) 22%, transparent); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; }
+.btn-block { width: 100%; margin-top: var(--space-2); }
+
+/* — forms — */
+.field > label {
+  display: block; font-size: 12px; margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+.input {
+  width: 100%; min-height: 36px; padding: 6px 10px; font: inherit;
+  font-size: 14px; color: var(--color-text); caret-color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
+textarea.input { min-height: 90px; resize: vertical; }
+.radio { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+.radio input, .seg-opt input {
+  position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
+}
+.radio .dot {
+  width: 16px; height: 16px; flex: none; border-radius: 50%;
+  border: 1.5px solid var(--color-divider);
+}
+.radio:hover .dot { border-color: var(--color-accent); }
+.radio input:checked + .dot {
+  border-color: var(--color-accent); background: var(--color-accent);
+  box-shadow: inset 0 0 0 4px var(--color-bg);
+}
+.radio input:focus-visible + .dot { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.seg {
+  display: inline-flex; overflow: hidden;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md);
+}
+.seg-opt {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 12px; font-size: 13px; cursor: pointer;
+}
+.seg-opt + .seg-opt { border-left: 1px solid var(--color-divider); }
+.seg-opt:has(input:checked) { color: var(--color-accent); box-shadow: inset 0 0 0 1px var(--color-accent); }
+.seg-opt:not(:has(input:checked)):hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
+.seg-opt:has(input:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+
+/* — cards — */
+.card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); border-radius: var(--radius-md); background: transparent; border: 1px solid var(--color-divider);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent); }
+.card-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 17px; line-height: 1.2;
+}
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  color: color-mix(in srgb, var(--color-text) 50%, transparent);
+}
+.elev-sm { box-shadow: var(--shadow-sm); }
+.elev-md { box-shadow: var(--shadow-md); }
+.elev-lg { box-shadow: var(--shadow-lg); }
+
+/* — tags — */
+.tag {
+  display: inline-flex; align-items: center; font-size: 11px;
+  letter-spacing: 0.02em; padding: 3px 10px;
+  border-radius: calc(var(--radius-md) * 0.75);
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent); }
+
+/* — navigation — */
+.nav {
+  display: flex; align-items: center; gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+}
+.nav-brand {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 18px; margin-right: auto;
+}
+.nav a { color: inherit; text-decoration: none; font-size: 14px; }
+.nav a:hover, .nav a[aria-current='page'] { color: var(--color-accent); }
+
+/* — tables — */
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-text) 60%, transparent);
+  padding: var(--space-2); border-bottom: 1px solid var(--color-divider);
+}
+.table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-divider);
+}
+.table tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+
+/* — dialog — */
+.dialog-backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+.dialog {
+  width: min(440px, 100%); display: flex; flex-direction: column; gap: var(--space-3);
+  padding: var(--space-4); border-radius: var(--radius-lg);
+  background: var(--color-surface); box-shadow: var(--shadow-lg); border: 1px solid var(--color-divider);
+}
+.dialog-title {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 20px;
+}
+.dialog-body { font-size: 14px; opacity: 0.85; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
+
+</style>
+<style>
+:root{
+--color-bg:#f9f7f0;--color-surface:#d8d2c2;--color-text:#4a4947;
+--color-accent:#b17457;--color-accent-2:#b17457;
+--color-divider:rgba(74,73,71,.22);
+--color-neutral-100:#f4f1e8;--color-neutral-200:#e8e3d6;--color-neutral-300:#d8d2c2;
+--color-neutral-400:#bdb6a5;--color-neutral-500:#9e9789;--color-neutral-600:#7e786d;
+--color-neutral-700:#625d55;--color-neutral-800:#4a4947;--color-neutral-900:#33322f;
+--color-accent-100:#f6e7de;--color-accent-200:#edd0bf;--color-accent-300:#dfb49a;
+--color-accent-400:#cb9375;--color-accent-500:#b17457;--color-accent-600:#9a5f44;
+--color-accent-700:#7e4c35;--color-accent-800:#5e3826;--color-accent-900:#3e251a;
+--shadow-sm:0 1px 2px rgba(74,73,71,.16);--shadow-md:0 3px 10px rgba(74,73,71,.18);
+--shadow-lg:0 12px 32px rgba(74,73,71,.26);
+}
+body{margin:0;background:#d8d2c2;display:flex;justify-content:center;align-items:flex-start;padding:44px 0 64px}
+a{color:var(--color-accent)}a:hover{color:var(--color-accent-700)}
+@keyframes lg-up{from{transform:translateY(102%)}to{transform:translateY(0)}}
+@keyframes lg-fade{from{opacity:0}to{opacity:1}}
+.lg-s{scrollbar-width:none}.lg-s::-webkit-scrollbar{width:0;height:0}
+</style>
+</head>
+<body>
+
+<!-- iOS device frame (inlined from ios-frame.jsx, exposed on window.IOSDevice) -->
+<script>
+/* iOS 26 device frame — the subset Ledger uses (IOSDevice + status bar),
+   ported from ios-frame.jsx to plain React.createElement so it needs no build
+   step. React is read lazily at render time. */
+(function () {
+  function h() { return window.React.createElement.apply(null, arguments); }
+
+  function IOSStatusBar(props) {
+    props = props || {};
+    var dark = !!props.dark, time = props.time || '9:41';
+    var c = dark ? '#fff' : '#000';
+    return h('div', { style: { display: 'flex', gap: 154, alignItems: 'center', justifyContent: 'center', padding: '21px 24px 19px', boxSizing: 'border-box', position: 'relative', zIndex: 20, width: '100%' } },
+      h('div', { style: { flex: 1, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 1.5 } },
+        h('span', { style: { fontFamily: '-apple-system, "SF Pro", system-ui', fontWeight: 590, fontSize: 17, lineHeight: '22px', color: c } }, time)),
+      h('div', { style: { flex: 1, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, paddingTop: 1, paddingRight: 1 } },
+        h('svg', { width: 19, height: 12, viewBox: '0 0 19 12' },
+          h('rect', { x: 0, y: 7.5, width: 3.2, height: 4.5, rx: 0.7, fill: c }),
+          h('rect', { x: 4.8, y: 5, width: 3.2, height: 7, rx: 0.7, fill: c }),
+          h('rect', { x: 9.6, y: 2.5, width: 3.2, height: 9.5, rx: 0.7, fill: c }),
+          h('rect', { x: 14.4, y: 0, width: 3.2, height: 12, rx: 0.7, fill: c })),
+        h('svg', { width: 17, height: 12, viewBox: '0 0 17 12' },
+          h('path', { d: 'M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z', fill: c }),
+          h('path', { d: 'M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z', fill: c }),
+          h('circle', { cx: 8.5, cy: 10.5, r: 1.5, fill: c })),
+        h('svg', { width: 27, height: 13, viewBox: '0 0 27 13' },
+          h('rect', { x: 0.5, y: 0.5, width: 23, height: 12, rx: 3.5, stroke: c, strokeOpacity: 0.35, fill: 'none' }),
+          h('rect', { x: 2, y: 2, width: 20, height: 9, rx: 2, fill: c }),
+          h('path', { d: 'M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z', fill: c, fillOpacity: 0.4 }))
+      ));
+  }
+
+  function IOSDevice(props) {
+    props = props || {};
+    var width = props.width || 402, height = props.height || 874, dark = !!props.dark;
+    return h('div', { 'data-om-starter': 'ios-frame', style: { width: width, height: height, borderRadius: 48, overflow: 'hidden', position: 'relative', background: dark ? '#000' : '#F2F2F7', boxShadow: '0 40px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.12)', fontFamily: '-apple-system, system-ui, sans-serif', WebkitFontSmoothing: 'antialiased' } },
+      h('div', { style: { position: 'absolute', top: 11, left: '50%', transform: 'translateX(-50%)', width: 126, height: 37, borderRadius: 24, background: '#000', zIndex: 50 } }),
+      h('div', { style: { position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10 } }, h(IOSStatusBar, { dark: dark })),
+      h('div', { style: { height: '100%', display: 'flex', flexDirection: 'column' } },
+        h('div', { style: { flex: 1, overflow: 'auto' } }, props.children)),
+      h('div', { style: { position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 60, height: 34, display: 'flex', justifyContent: 'center', alignItems: 'flex-end', paddingBottom: 8, pointerEvents: 'none' } },
+        h('div', { style: { width: 139, height: 5, borderRadius: 100, background: dark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.25)' } }))
+    );
+  }
+
+  window.IOSDevice = IOSDevice;
+  window.IOSStatusBar = IOSStatusBar;
+})();
+
+</script>
+
+<!-- ============ App template (Ledger.dc.html) ============ -->
+<x-dc>
+
+<x-import component-from-global-scope="IOSDevice" hint-size="402px,874px">
+<div style="height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body);font-size:15px">
+
+<div class="lg-s" style="flex:1;overflow-y:auto;background:var(--color-bg)">
+<div style="position:sticky;top:0;height:46px;background:var(--color-bg);z-index:2"></div>
+<div style="margin-top:-46px;padding:52px 20px 18px;position:relative;z-index:3;background:var(--color-accent);color:#f9f7f0;border-radius:0 0 28px 28px;box-shadow:var(--shadow-md)">
+<div style="display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px">
+<div style="width:44px;height:44px;border-radius:22px;display:grid;place-items:center;background:rgba(249,247,240,.16);border:1px solid rgba(249,247,240,.4);font-family:var(--font-heading);font-weight:600;font-size:21px;line-height:1;letter-spacing:-.02em">Ae</div>
+<div style="text-align:center;line-height:1.1">
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-family:var(--font-heading);font-weight:300;font-size:15px;color:#f9f7f0">Welcome</div>
+<div style="font-family:var(--font-heading);font-weight:600;font-size:21px;letter-spacing:-.01em">Ahmed!</div>
+<div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#f9f7f0;padding-top:4px">{{ todayLabel }}</div>
+</div>
+</sc-if>
+<sc-if value="{{ showAdd }}" hint-placeholder-val="{{ false }}">
+<div style="font-family:var(--font-heading);font-weight:600;font-size:22px;letter-spacing:.01em">{{ screenName }}</div>
+</sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px;justify-content:flex-end">
+<button onClick="{{ toggleCur }}" title="Change currency" style="display:flex;align-items:center;gap:5px;border:1px solid rgba(249,247,240,.4);border-radius:20px;padding:8px 12px;background:rgba(249,247,240,.16);color:#f9f7f0;cursor:pointer;font-family:var(--font-heading);font-size:12.5px;letter-spacing:.1em" style-hover="background:rgba(249,247,240,.26)">
+<span>{{ curLabel }}</span>
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+</div>
+<sc-if value="{{ curOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;right:20px;top:104px;z-index:45;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-md);box-shadow:var(--shadow-md);min-width:170px;overflow:hidden;animation:lg-fade .14s ease">
+<sc-for list="{{ curOptions }}" as="c" hint-placeholder-count="5">
+<button onClick="{{ c.select }}" style="display:flex;width:100%;align-items:baseline;justify-content:space-between;gap:14px;padding:9px 13px;background:none;border:0;border-bottom:1px solid var(--color-neutral-200);cursor:pointer;text-align:left;font-family:var(--font-heading);font-size:15px;letter-spacing:.06em;color:{{ c.color }}" style-hover="background:var(--color-accent-100)">
+<span>{{ c.code }}</span><span style="font-family:var(--font-body);font-size:10px;color:var(--color-neutral-700);font-feature-settings:'tnum'">{{ c.rateNote }}</span>
+</button>
+</sc-for>
+<div style="padding:9px 13px;font-family:var(--font-body);font-size:10px;line-height:1.4;font-style:italic;color:var(--color-neutral-700)">{{ fxNote }}</div>
+</div>
+</sc-if>
+</div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:20px 0 0">
+<sc-if value="{{ showAdd }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ toggleMonth }}" style="display:flex;align-items:center;gap:7px;border:1px solid rgba(249,247,240,.4);border-radius:var(--radius-md);padding:4px 10px 5px;background:rgba(249,247,240,.12);color:#f9f7f0;cursor:pointer;font-family:inherit" style-hover="background:rgba(249,247,240,.24)">
+<span style="font-family:var(--font-heading);font-weight:500;font-size:17px;line-height:1.25;letter-spacing:.03em;font-feature-settings:'tnum'">{{ monthLabel }}</span>
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+</sc-if>
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#f9f7f0">Left this month</div>
+<div style="font-family:var(--font-heading);font-weight:500;font-size:36px;line-height:1.05;letter-spacing:-.01em;font-feature-settings:'tnum';padding-top:4px;white-space:nowrap">{{ netLeft }}</div>
+<div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#f9f7f0;padding-top:4px">{{ screenName }} · {{ monthLabel }}</div>
+</div>
+</sc-if>
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div style="margin-left:auto;display:grid;justify-items:end;gap:8px">
+<button onClick="{{ exportXlsx }}" style="display:flex;align-items:center;gap:6px;border:1px solid rgba(249,247,240,.4);border-radius:var(--radius-md);padding:6px 11px;background:rgba(249,247,240,.12);color:#f9f7f0;cursor:pointer;font-family:var(--font-heading);font-size:12.5px;letter-spacing:.05em" style-hover="background:rgba(249,247,240,.24)">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 11l5 5 5-5M5 20h14"></path></svg>Excel</button>
+<button onClick="{{ toggleMonth }}" style="display:flex;align-items:center;gap:6px;border:1px solid rgba(249,247,240,.4);border-radius:var(--radius-md);padding:3px 9px 4px;background:rgba(249,247,240,.12);color:#f9f7f0;cursor:pointer;font-family:inherit" style-hover="background:rgba(249,247,240,.24)">
+<span style="font-family:var(--font-heading);font-weight:500;font-size:13.5px;line-height:1.3;letter-spacing:.04em;font-feature-settings:'tnum'">{{ monthLabel }}</span>
+<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+</button>
+</div>
+</sc-if>
+<sc-if value="{{ showAdd }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ openAdd }}" style="display:flex;align-items:center;gap:6px;border:1px solid rgba(249,247,240,.5);border-radius:var(--radius-md);padding:7px 12px;background:rgba(249,247,240,.12);color:#f9f7f0;cursor:pointer;font-family:var(--font-heading);font-size:13.5px;letter-spacing:.04em" style-hover="background:rgba(249,247,240,.26)">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>{{ addLabel }}</button>
+</sc-if>
+</div>
+
+
+<sc-if value="{{ monthOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;left:{{ popLeft }};right:{{ popRight }};top:{{ popTop }};z-index:40;background:var(--color-neutral-100);border:1px solid var(--color-divider);border-radius:var(--radius-md);box-shadow:var(--shadow-md);min-width:190px;overflow:hidden;animation:lg-fade .14s ease">
+<sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="4">
+<button onClick="{{ m.select }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:14px;padding:10px 14px;background:none;border:0;border-bottom:1px solid var(--color-neutral-200);cursor:pointer;font-family:var(--font-heading);font-size:17px;color:{{ m.color }};text-align:left" style-hover="background:var(--color-accent-100)">
+<span>{{ m.label }}</span><span style="font-family:var(--font-body);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-500)">{{ m.note }}</span>
+</button>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="padding:0 22px 24px">
+
+<sc-if value="{{ isDash }}" hint-placeholder-val="{{ true }}">
+<div>
+<sc-if value="{{ hasWarn }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:9px;margin-top:16px;border:1px solid var(--color-accent-300);border-left:3px solid var(--color-accent);border-radius:var(--radius-sm);padding:9px 12px;background:var(--color-accent-100)">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-800)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg>
+<span style="font-size:12.5px;color:var(--color-accent-800)">{{ warn }}</span>
+</div>
+</sc-if>
+
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 0">
+<div style="display:flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ scopeOptions }}" as="o" hint-placeholder-count="2">
+<button onClick="{{ o.select }}" style="padding:6px 14px;border:0;border-right:1px solid var(--color-divider);cursor:pointer;font-family:var(--font-heading);font-size:13px;letter-spacing:.05em;background:{{ o.bg }};color:{{ o.fc }}">{{ o.label }}</button>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-style:italic;color:var(--color-neutral-700);text-align:right;max-width:150px">{{ scopeNote }}</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:10px;padding:24px 0 2px">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500">Across the months</div>
+<div style="flex:1;height:1px;background:var(--color-divider)"></div>
+</div>
+<div style="padding:12px 0 0">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px">
+<div style="display:flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ chart.modeOptions }}" as="o" hint-placeholder-count="2">
+<button onClick="{{ o.select }}" style="padding:5px 12px;border:0;border-right:1px solid var(--color-divider);cursor:pointer;font-family:var(--font-heading);font-size:12.5px;letter-spacing:.05em;background:{{ o.bg }};color:{{ o.fc }}">{{ o.label }}</button>
+</sc-for>
+</div>
+<select value="{{ monthKeyVal }}" onChange="{{ chart.onMonth }}" class="input" style="font-family:var(--font-heading);font-size:12.5px;padding:5px 8px;max-width:132px">
+<sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="7"><option value="{{ m.key }}">{{ m.label }}</option></sc-for>
+</select>
+</div>
+<div style="font-size:10px;font-style:italic;color:var(--color-neutral-700);padding-bottom:8px">{{ chart.note }}</div>
+<div style="display:flex;justify-content:space-between;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700);padding-bottom:4px"><span>{{ currency }}</span><span>peak {{ chart.max }}</span></div>
+<div style="display:flex;align-items:flex-end;gap:7px;height:132px;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ chart.bars }}" as="b" hint-placeholder-count="7">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;height:100%">
+<div style="font-size:8.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ b.value }}</div>
+<div style="width:100%;height:{{ b.hR }}%;background:#e5cbba;border-radius:3px 3px 0 0"></div>
+<div style="width:100%;height:{{ b.hA }}%;background:{{ b.aColor }};border-radius:{{ b.rA }}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:7px;padding:6px 0 0">
+<sc-for list="{{ chart.bars }}" as="b" hint-placeholder-count="7">
+<span style="flex:1;text-align:center;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:{{ b.labelColor }}">{{ b.label }}</span>
+</sc-for>
+</div>
+<div style="display:flex;gap:18px;padding:12px 0 0;align-items:center">
+<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-neutral-700)"><span style="width:14px;height:10px;border-radius:2px;background:#b17457"></span>Actual</span>
+<span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--color-neutral-700)"><span style="width:14px;height:10px;border-radius:2px;background:#e5cbba"></span>Budget remaining</span>
+</div>
+</div>
+
+<div style="border:1px solid var(--color-text);border-radius:14px;padding:16px 14px 10px;margin-top:26px;background:var(--color-neutral-100)">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500;line-height:1.15">Budget vs actual</div>
+<div style="font-size:11px;font-style:italic;color:var(--color-neutral-700);padding:4px 0 2px">Every budgeted item, with what has been spent against it. Tap a line for its month by month history.</div>
+<sc-for list="{{ breakdown }}" as="g" hint-placeholder-count="3">
+<div style="padding-bottom:8px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:14px 0 5px;border-bottom:1px solid var(--color-text)">
+<span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ g.type }}</span>
+<span style="display:flex;align-items:baseline;gap:8px">
+<span style="font-family:var(--font-heading);font-size:17px;line-height:1;font-feature-settings:'tnum'">{{ g.gActual }}</span>
+<span style="font-size:11px;font-feature-settings:'tnum';color:var(--color-neutral-700)">of {{ g.gBudget }}</span>
+<span style="font-family:var(--font-heading);font-size:13px;font-feature-settings:'tnum';color:{{ g.gColor }}">{{ g.gPct }}</span>
+</span>
+</div>
+<sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+<button onClick="{{ r.open }}" style="display:grid;width:100%;gap:6px;padding:10px 0;border:0;border-bottom:1px solid var(--color-neutral-200);background:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text)" style-hover="opacity:.72">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;min-width:0">
+<span style="flex:none;width:27px;height:27px;display:grid;place-items:center;border:1px solid var(--color-accent-300);border-radius:var(--radius-md);background:var(--color-accent-100)">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ r.icon }}"></path></svg>
+</span>
+<span style="font-size:14px">{{ r.category }}</span>
+<span style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-accent-800);border:1px solid var(--color-accent-300);border-radius:2px;padding:1px 5px;display:{{ r.tagShow }}">over</span>
+</div>
+<div style="font-family:var(--font-heading);font-size:17px;line-height:1;font-feature-settings:'tnum';color:{{ r.varColor }};flex:none">{{ r.pctLabel }}</div>
+</div>
+<div style="position:relative;height:6px;background:var(--color-neutral-300);border-radius:3px;overflow:hidden"><div style="position:absolute;top:0;bottom:0;left:0;background:{{ r.barColor }};width:{{ r.pct }}%"></div></div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:10.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">
+<span>{{ r.spent }}</span><span style="color:{{ r.varColor }}">{{ r.variance }}</span>
+</div>
+</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+
+<div style="border:1px solid var(--color-text);border-radius:14px;padding:16px 14px 10px;margin-top:24px;background:var(--color-neutral-100)">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500;line-height:1.15">Where the money went</div>
+<div style="font-size:11px;font-style:italic;color:var(--color-neutral-700);padding:4px 0 2px">{{ rankedNote }} Tap a slice for its daily breakdown.</div>
+<div style="display:grid;place-items:center;padding:18px 0 6px">
+<div style="position:relative;width:196px;height:196px">
+<svg width="196" height="196" viewBox="0 0 92 92" style="transform:rotate(-90deg);overflow:visible">
+<circle cx="46" cy="46" r="40" fill="none" stroke="var(--color-neutral-300)" stroke-width="11"></circle>
+<sc-for list="{{ donutSegs }}" as="d" hint-placeholder-count="5">
+<circle onClick="{{ d.open }}" cx="46" cy="46" r="40" fill="none" stroke="{{ d.color }}" stroke-width="11" stroke-dasharray="{{ d.dash }}" stroke-dashoffset="{{ d.offset }}" style="cursor:pointer"></circle>
+</sc-for>
+</svg>
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-content:center;text-align:center;pointer-events:none">
+<div style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700)">{{ currency }}</div>
+<div style="font-family:var(--font-heading);font-size:27px;line-height:1.1;font-feature-settings:'tnum'">{{ donutTotal }}</div>
+<div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--color-neutral-700)">spent</div>
+</div>
+</div>
+</div>
+<sc-for list="{{ donutSegs }}" as="d" hint-placeholder-count="5">
+<button onClick="{{ d.open }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border:0;border-bottom:1px solid var(--color-neutral-200);background:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text)" style-hover="opacity:.7">
+<div style="display:flex;align-items:center;gap:10px;min-width:0">
+<span style="flex:none;width:10px;height:10px;border-radius:2px;background:{{ d.color }}"></span>
+<span style="font-size:14.5px">{{ d.category }}</span>
+<span style="font-size:10.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ d.pct }}</span>
+</div>
+<span style="font-family:var(--font-heading);font-size:19px;line-height:1;font-feature-settings:'tnum';flex:none">{{ d.amount }}</span>
+</button>
+</sc-for>
+<sc-if value="{{ donutEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:24px 0;text-align:center;color:var(--color-neutral-700);font-style:italic;font-size:13px">No expenses recorded this month.</div>
+</sc-if>
+</div>
+
+<div style="border:1px solid var(--color-text);border-radius:14px;padding:16px 14px 8px;margin-top:24px;background:var(--color-neutral-100)">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500;line-height:1.15;padding-bottom:4px">Recent Transactions</div>
+<sc-for list="{{ recent }}" as="t" hint-placeholder-count="3">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--color-neutral-200)">
+<div style="display:grid;gap:2px">
+<div style="font-size:14px">{{ t.category }}</div>
+<div style="font-size:11px;color:var(--color-neutral-700);font-style:italic">{{ t.sub }}</div>
+</div>
+<div style="font-size:14px;font-feature-settings:'tnum';white-space:nowrap;color:{{ t.color }}">{{ t.signed }}</div>
+</div>
+</sc-for>
+</div>
+<div style="padding-top:18px"><button onClick="{{ goActivity }}" class="btn btn-secondary btn-block">See all activity</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBudget }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:20px 0 16px">
+<div style="font-family:var(--font-heading);font-weight:300;font-size:31px;line-height:1.05;color:var(--color-neutral-600)">Plan for</div>
+<div style="font-family:var(--font-heading);font-weight:600;font-size:31px;line-height:1.05;letter-spacing:-.01em">{{ monthLabel }}</div>
+<div style="font-size:11.5px;font-style:italic;color:var(--color-neutral-600);padding-top:8px">{{ budgetNote }}</div>
+<sc-if value="{{ canRoll }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ rollForward }}" style="margin-top:12px;display:flex;align-items:center;gap:7px;border:1px solid var(--color-accent);border-radius:var(--radius-md);padding:7px 12px;background:none;color:var(--color-accent-700);cursor:pointer;font-family:var(--font-heading);font-size:13px;letter-spacing:.04em" style-hover="background:var(--color-accent-100)">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"></path><path d="M3 11V9a4 4 0 0 1 4-4h14"></path></svg>{{ rollLabel }} into this month</button>
+</sc-if>
+</div>
+<div class="lg-s" style="margin:0 -22px 4px;padding:0 22px 6px;overflow-x:auto">
+<div style="display:flex;gap:8px;width:max-content">
+<sc-for list="{{ monthStrip }}" as="m" hint-placeholder-count="7">
+<button onClick="{{ m.select }}" style="display:grid;gap:3px;justify-items:start;min-width:78px;padding:9px 11px;border:1px solid {{ m.bc }};border-radius:var(--radius-md);cursor:pointer;text-align:left;background:{{ m.bg }};color:{{ m.fc }};font-family:inherit" style-hover="border-color:var(--color-accent-400)">
+<span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase">{{ m.label }}</span>
+<span style="font-family:var(--font-heading);font-size:17px;line-height:1;font-feature-settings:'tnum'">{{ m.total }}</span>
+<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ m.note }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<div style="margin:0 -22px">
+<sc-for list="{{ budgetGroups }}" as="g" hint-placeholder-count="3">
+<div style="margin-bottom:22px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;background:#4a4947;color:#f9f7f0;padding:14px 22px 13px">
+<div style="display:flex;align-items:baseline;gap:10px">
+<span style="font-family:var(--font-heading);font-size:13px;letter-spacing:.2em;text-transform:uppercase">{{ g.label }}</span>
+<span style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#f9f7f0">{{ g.count }}</span>
+</div>
+<span style="font-family:var(--font-heading);font-size:21px;line-height:1;font-feature-settings:'tnum'">{{ g.total }}</span>
+</div>
+<sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="4">
+<button onClick="{{ r.edit }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;border:0;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text);background:{{ r.bg }}" style-hover="filter:brightness(.97)">
+<div style="display:grid;gap:4px;min-width:0">
+<div style="display:flex;align-items:center;gap:8px">
+<span style="font-size:15px;letter-spacing:.01em">{{ r.category }}</span>
+<span style="font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-700);display:{{ r.recShow }}">↻ monthly</span>
+</div>
+<div style="font-size:11px;color:var(--color-neutral-700);font-style:italic">{{ r.sub }}</div>
+</div>
+<span style="font-family:var(--font-heading);font-size:22px;line-height:1;font-feature-settings:'tnum';flex:none">{{ r.amount }}</span>
+</button>
+</sc-for>
+<button onClick="{{ g.add }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border:0;border-top:1px solid var(--color-accent-300);cursor:pointer;text-align:left;font-family:var(--font-heading);font-size:13.5px;letter-spacing:.05em;color:var(--color-accent-800);background:var(--color-accent-100)" style-hover="background:var(--color-accent-200)">
+<span>{{ g.addLabel }}</span>
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+</sc-for>
+</div>
+
+<sc-if value="{{ budgetEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:34px 0;text-align:center;color:var(--color-neutral-600);font-style:italic;font-size:13.5px">Nothing budgeted for this month yet.</div>
+</sc-if>
+<div style="padding-top:20px"><button onClick="{{ openAdd }}" class="btn btn-secondary btn-block">New budget item</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPortfolio }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="padding:20px 0 4px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-700)">Net worth</div>
+<div style="font-family:var(--font-heading);font-weight:400;font-size:36px;line-height:1.05;letter-spacing:-.01em;font-feature-settings:'tnum';padding-top:4px">{{ netWorth }}</div>
+<div style="font-size:11px;font-style:italic;color:var(--color-neutral-700);padding-top:4px">Across {{ holdingCount }}.</div>
+</div>
+
+<div style="padding:10px 0 4px;position:relative">
+<svg viewBox="0 0 260 192" width="100%" style="display:block;overflow:visible">
+<g transform="rotate(-90 130 96)">
+<circle cx="130" cy="96" r="60" fill="none" stroke="var(--color-neutral-300)" stroke-width="14"></circle>
+<sc-for list="{{ assetClasses }}" as="a" hint-placeholder-count="5">
+<circle onClick="{{ a.open }}" cx="130" cy="96" r="60" fill="none" stroke="{{ a.color }}" stroke-width="14" stroke-dasharray="{{ a.dash }}" stroke-dashoffset="{{ a.offset }}" style="cursor:pointer"></circle>
+</sc-for>
+</g>
+<sc-for list="{{ assetClasses }}" as="a" hint-placeholder-count="5">
+<polyline points="{{ a.points }}" fill="none" stroke="{{ a.color }}" stroke-width="1.2" style="display:{{ a.labelShow }}"></polyline>
+</sc-for>
+</svg>
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-content:center;text-align:center;pointer-events:none">
+<div style="font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700)">By class</div>
+<div style="font-family:var(--font-heading);font-size:16px;line-height:1.2;font-feature-settings:'tnum'">{{ netWorth }}</div>
+</div>
+<sc-for list="{{ assetClasses }}" as="a" hint-placeholder-count="5">
+<button onClick="{{ a.open }}" style="position:absolute;display:{{ a.labelShow }};left:{{ a.labLeft }};top:{{ a.labTop }};transform:{{ a.labTransform }};text-align:{{ a.labAlign }};background:none;border:0;padding:0;cursor:pointer;font-family:inherit;color:var(--color-text);line-height:1.15;white-space:nowrap">
+<div style="font-size:10.5px">{{ a.cls }}</div>
+<div style="font-family:var(--font-heading);font-size:13px;font-feature-settings:'tnum';color:{{ a.color }}">{{ a.pct }}</div>
+</button>
+</sc-for>
+</div>
+
+<div style="border:1px solid var(--color-text);border-radius:14px;padding:16px 14px 10px;margin-top:14px;background:var(--color-neutral-100)">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500;line-height:1.15;padding-bottom:6px">Breakdown by asset class</div>
+<sc-for list="{{ assetClasses }}" as="a" hint-placeholder-count="5">
+<button onClick="{{ a.open }}" style="display:{{ a.show }};width:100%;gap:6px;padding:10px 0;border:0;border-bottom:1px solid var(--color-neutral-200);background:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text)" style-hover="opacity:.7">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:9px;min-width:0"><span style="flex:none;width:10px;height:10px;border-radius:2px;background:{{ a.color }}"></span><span style="font-size:14.5px">{{ a.cls }}</span><span style="font-size:10.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ a.pct }}</span></div>
+<span style="font-family:var(--font-heading);font-size:18px;line-height:1;font-feature-settings:'tnum';flex:none">{{ a.value }}</span>
+</div>
+<div style="position:relative;height:5px;background:var(--color-neutral-300);border-radius:3px;overflow:hidden"><div style="position:absolute;top:0;bottom:0;left:0;background:{{ a.color }};width:{{ a.width }}%"></div></div>
+</button>
+</sc-for>
+</div>
+
+<div style="display:flex;align-items:center;gap:10px;padding:24px 0 2px">
+<div style="font-family:var(--font-heading);font-size:19px;font-weight:500">Holdings</div>
+<div style="flex:1;height:1px;background:var(--color-divider)"></div>
+</div>
+<sc-for list="{{ holdingGroups }}" as="g" hint-placeholder-count="4">
+<div style="padding-bottom:6px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0 4px;border-bottom:1px solid var(--color-text)">
+<div style="display:flex;align-items:center;gap:8px"><span style="flex:none;width:8px;height:8px;border-radius:2px;background:{{ g.color }}"></span><span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700)">{{ g.cls }}</span></div>
+<span style="font-family:var(--font-heading);font-size:15px;font-feature-settings:'tnum'">{{ g.total }}</span>
+</div>
+<sc-for list="{{ g.rows }}" as="h" hint-placeholder-count="2">
+<button onClick="{{ h.edit }}" style="display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border:0;border-bottom:1px solid var(--color-neutral-200);background:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text)" style-hover="opacity:.7">
+<div style="display:grid;gap:3px;min-width:0">
+<span style="font-size:14.5px">{{ h.name }}</span>
+<span style="font-size:11px;font-style:italic;color:var(--color-neutral-700)">{{ h.notes }}</span>
+</div>
+<div style="display:grid;justify-items:end;gap:3px;flex:none">
+<span style="font-family:var(--font-heading);font-size:19px;line-height:1;font-feature-settings:'tnum'">{{ h.value }}</span>
+<span style="font-size:10.5px;font-feature-settings:'tnum';letter-spacing:.04em;color:{{ h.roiColor }}">{{ h.roi }} ROI</span>
+</div>
+</button>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{ portfolioEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:30px 0;text-align:center;color:var(--color-neutral-700);font-style:italic;font-size:13.5px">No holdings recorded yet.</div>
+</sc-if>
+<div style="padding-top:18px"><button onClick="{{ openAdd }}" class="btn btn-primary btn-block">Add a holding</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isActivity }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="border:1px solid var(--color-text);border-radius:14px;padding:14px;margin-top:18px;background:var(--color-neutral-100);display:grid;gap:10px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+<span style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-700)">{{ monthLabel }} net</span>
+<span style="font-family:var(--font-heading);font-size:24px;line-height:1;font-feature-settings:'tnum'">{{ actNet }}</span>
+</div>
+<div style="display:flex;gap:18px">
+<span style="font-size:11px;color:var(--color-neutral-700)">In <span style="font-family:var(--font-heading);font-size:15px;color:#4a6640;font-feature-settings:'tnum'">{{ actIn }}</span></span>
+<span style="font-size:11px;color:var(--color-neutral-700)">Out <span style="font-family:var(--font-heading);font-size:15px;color:#7e4c35;font-feature-settings:'tnum'">{{ actOut }}</span></span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--color-divider);padding:14px 0 8px;margin-bottom:2px">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--color-neutral-500)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+<input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Search category or note" style="flex:1;border:0;background:none;outline:none;font-family:var(--font-body);font-size:14px;color:var(--color-text);min-width:0">
+</div>
+<div style="display:flex;gap:7px;padding:10px 0 4px;flex-wrap:wrap">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+<button onClick="{{ f.select }}" style="font-family:var(--font-heading);font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border:1px solid {{ f.bc }};color:{{ f.fc }};background:{{ f.bg }};border-radius:var(--radius-md);cursor:pointer">{{ f.label }}</button>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;padding:12px 0 6px;border-bottom:1px solid var(--color-text)">
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600)">{{ activityCount }}</div>
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-600)">Amount</div>
+</div>
+<sc-for list="{{ txGroups }}" as="g" hint-placeholder-count="4">
+<div>
+<div style="font-family:var(--font-heading);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-700);padding:14px 0 4px">{{ g.label }}</div>
+<sc-for list="{{ g.items }}" as="t" hint-placeholder-count="3">
+<div style="position:relative;overflow:hidden;border-bottom:1px solid var(--color-neutral-200)">
+<button onClick="{{ t.remove }}" style="position:absolute;top:0;right:0;bottom:0;width:88px;display:grid;place-items:center;gap:3px;border:0;background:#7e4c35;color:#f9f7f0;cursor:pointer;font-family:var(--font-heading);font-size:12px;letter-spacing:.08em">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5h6v2M7 7l1 13h8l1-13"></path></svg>Delete</button>
+<button onClick="{{ t.edit }}" onPointerDown="{{ t.down }}" onPointerMove="{{ swipeMove }}" onPointerUp="{{ swipeEnd }}" onPointerCancel="{{ swipeEnd }}" style="position:relative;display:flex;width:100%;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;background:var(--color-bg);border:0;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text);transform:translateX({{ t.tx }});transition:{{ t.trans }};touch-action:pan-y">
+<div style="display:grid;gap:3px;min-width:0">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="font-size:14.5px">{{ t.category }}</span>
+<span style="font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-700);display:{{ t.recShow }}">↻</span>
+</div>
+<div style="font-size:11px;color:var(--color-neutral-700);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px">{{ t.sub }}</div>
+</div>
+<div style="display:grid;justify-items:end;gap:2px;flex:none">
+<span style="font-family:var(--font-heading);font-size:18px;font-feature-settings:'tnum';color:{{ t.color }}">{{ t.signed }}</span>
+<span style="font-size:10px;font-feature-settings:'tnum';color:var(--color-neutral-700)">bal {{ t.balance }}</span>
+</div>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{ activityEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:34px 0;text-align:center;color:var(--color-neutral-600);font-style:italic;font-size:13.5px">No entries match.</div>
+</sc-if>
+<div style="padding-top:18px"><button onClick="{{ openAdd }}" class="btn btn-primary btn-block">Record a transaction</button></div>
+</div>
+</sc-if>
+
+</div>
+
+</div>
+<div style="flex:none;padding:16px 18px 30px;display:flex;justify-content:space-between;align-items:center;background:#f9f7f0;border-top:1px solid var(--color-divider);border-radius:24px 24px 0 0;position:relative;z-index:10;box-shadow:0 -3px 12px rgba(74,73,71,.08)">
+<button onClick="{{ goDash }}" aria-label="Dashboard" title="Dashboard" style="display:grid;justify-items:center;gap:3px;background:none;border:0;cursor:pointer;padding:0 4px;color:{{ dashCol }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"></path><path d="M3.34 19a10 10 0 1 1 17.32 0"></path></svg>
+<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;line-height:1">Dashboard</span><span style="width:4px;height:4px;border-radius:2px;background:{{ dashUl }}"></span>
+</button>
+<button onClick="{{ goBudget }}" aria-label="Budget" title="Budget" style="display:grid;justify-items:center;gap:3px;background:none;border:0;cursor:pointer;padding:0 4px;color:{{ budCol }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><path d="M16 11h5v4h-5a2 2 0 0 1 0-4z"></path></svg>
+<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;line-height:1">Budget</span><span style="width:4px;height:4px;border-radius:2px;background:{{ budUl }}"></span>
+</button>
+<button onClick="{{ openTxn }}" aria-label="Record a transaction" title="Record a transaction" style="width:56px;height:56px;flex:none;margin-top:-40px;display:grid;place-items:center;border:4px solid #f9f7f0;border-radius:28px;background:#4a4947;color:#f9f7f0;cursor:pointer;box-shadow:var(--shadow-md)" style-hover="background:#33322f">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+<button onClick="{{ goActivity }}" aria-label="Activity" title="Activity" style="display:grid;justify-items:center;gap:3px;background:none;border:0;cursor:pointer;padding:0 4px;color:{{ actCol }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>
+<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;line-height:1">Activity</span><span style="width:4px;height:4px;border-radius:2px;background:{{ actUl }}"></span>
+</button>
+<button onClick="{{ goPortfolio }}" aria-label="Portfolio" title="Portfolio" style="display:grid;justify-items:center;gap:3px;background:none;border:0;cursor:pointer;padding:0 4px;color:{{ pfCol }}">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 15v-4M12 15V7M17 15v-6"></path></svg>
+<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;line-height:1">Portfolio</span><span style="width:4px;height:4px;border-radius:2px;background:{{ pfUl }}"></span>
+</button>
+</div>
+
+<sc-if value="{{ assetOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:87;display:flex;align-items:center;justify-content:center;padding:22px">
+<div onClick="{{ closeAsset }}" style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(74,73,71,.44);animation:lg-fade .18s ease"></div>
+<div style="position:relative;width:100%;background:var(--color-bg);border:1px solid var(--color-text);border-radius:16px;box-shadow:var(--shadow-lg);padding:20px;animation:lg-fade .2s ease">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;min-width:0">
+<span style="flex:none;width:12px;height:12px;border-radius:3px;background:{{ asset.color }}"></span>
+<div style="display:grid;gap:2px;min-width:0">
+<div style="font-family:var(--font-heading);font-size:21px;line-height:1.1">{{ asset.cls }}</div>
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700)">{{ asset.count }}</div>
+</div>
+</div>
+<button onClick="{{ closeAsset }}" aria-label="Close" style="flex:none;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:none;color:var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 0 0">
+<div style="font-family:var(--font-heading);font-size:26px;line-height:1;font-feature-settings:'tnum'">{{ asset.value }}</div>
+<div style="font-size:13px;font-feature-settings:'tnum';color:{{ asset.roiColor }}">{{ asset.roi }} ROI</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:132px;padding:16px 0 0;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ asset.bars }}" as="b" hint-placeholder-count="7">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%">
+<div style="font-size:8.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ b.value }}</div>
+<div style="width:100%;height:{{ b.h }}%;min-height:2px;background:{{ asset.color }};border-radius:3px 3px 0 0;opacity:{{ b.op }}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:6px;padding-top:6px">
+<sc-for list="{{ asset.bars }}" as="b" hint-placeholder-count="7">
+<div style="flex:1;text-align:center;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ b.label }}</div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-style:italic;color:var(--color-neutral-700);padding-top:10px">Cost basis {{ asset.cost }} {{ currency }}.</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ spendOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:86;display:flex;align-items:center;justify-content:center;padding:22px">
+<div onClick="{{ closeSpend }}" style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(74,73,71,.44);animation:lg-fade .18s ease"></div>
+<div style="position:relative;width:100%;background:var(--color-bg);border:1px solid #e2cd45;border-radius:16px;box-shadow:var(--shadow-lg);padding:20px;animation:lg-fade .2s ease">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;min-width:0">
+<span style="flex:none;width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--color-accent-300);border-radius:var(--radius-md);background:var(--color-accent-100)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ spend.icon }}"></path></svg>
+</span>
+<div style="display:grid;gap:2px;min-width:0">
+<div style="font-family:var(--font-heading);font-size:21px;line-height:1.1">{{ spend.category }}</div>
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700)">{{ monthLabel }} · {{ spend.count }}</div>
+</div>
+</div>
+<button onClick="{{ closeSpend }}" aria-label="Close" style="flex:none;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:none;color:var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 0 0">
+<div style="font-family:var(--font-heading);font-size:26px;line-height:1;font-feature-settings:'tnum'">{{ spend.total }}</div>
+<div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">by date</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:7px;height:132px;padding:16px 0 0;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ spend.bars }}" as="b" hint-placeholder-count="4">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%">
+<div style="font-size:9.5px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ b.value }}</div>
+<div style="width:100%;height:{{ b.h }}%;min-height:2px;background:#b17457;border-radius:3px 3px 0 0"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:7px;padding-top:6px">
+<sc-for list="{{ spend.bars }}" as="b" hint-placeholder-count="4">
+<div style="flex:1;text-align:center;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-700)">{{ b.label }}</div>
+</sc-for>
+</div>
+<sc-if value="{{ spend.empty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:16px 0 0;text-align:center;font-style:italic;font-size:12.5px;color:var(--color-neutral-700)">Nothing recorded this month.</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ detailOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:85;display:flex;align-items:center;justify-content:center;padding:22px">
+<div onClick="{{ closeDetail }}" style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(74,73,71,.44);animation:lg-fade .18s ease"></div>
+<div style="position:relative;width:100%;background:var(--color-bg);border:1px solid #e2cd45;border-radius:16px;box-shadow:var(--shadow-lg);padding:20px;animation:lg-fade .2s ease;max-height:78%;overflow-y:auto">
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:10px;min-width:0">
+<span style="flex:none;width:32px;height:32px;display:grid;place-items:center;border:1px solid var(--color-accent-300);border-radius:var(--radius-md);background:var(--color-accent-100)">
+<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{ detail.icon }}"></path></svg>
+</span>
+<div style="display:grid;gap:2px;min-width:0">
+<div style="font-family:var(--font-heading);font-size:21px;line-height:1.1">{{ detail.category }}</div>
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700)">{{ detail.type }}</div>
+</div>
+</div>
+<button onClick="{{ closeDetail }}" aria-label="Close" style="flex:none;width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:none;color:var(--color-text);cursor:pointer" style-hover="background:var(--color-accent-100)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg></button>
+</div>
+
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:16px 0 4px">
+<div style="font-family:var(--font-heading);font-size:26px;line-height:1;font-feature-settings:'tnum'">{{ detail.total }}</div>
+<div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--color-neutral-700)">{{ detail.verb }} across the year</div>
+</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 0">
+<div style="display:flex;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ detail.modeOptions }}" as="o" hint-placeholder-count="2">
+<button onClick="{{ o.select }}" style="padding:5px 12px;border:0;border-right:1px solid var(--color-divider);cursor:pointer;font-family:var(--font-heading);font-size:12.5px;letter-spacing:.05em;background:{{ o.bg }};color:{{ o.fc }}">{{ o.label }}</button>
+</sc-for>
+</div>
+<div style="font-size:10px;font-style:italic;color:var(--color-neutral-700);text-align:right">{{ detail.modeNote }}</div>
+</div>
+<div style="display:flex;align-items:flex-end;gap:6px;height:140px;padding:14px 0 0;border-bottom:1px solid var(--color-divider)">
+<sc-for list="{{ detail.bars }}" as="b" hint-placeholder-count="7">
+<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%">
+<div style="font-size:9px;font-feature-settings:'tnum';color:var(--color-neutral-700)">{{ b.value }}</div>
+<div style="position:relative;width:100%;height:{{ b.h }}%;min-height:2px;background:{{ detail.color }};border-radius:3px 3px 0 0;opacity:{{ b.op }}"></div>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;gap:6px;padding-top:6px">
+<sc-for list="{{ detail.bars }}" as="b" hint-placeholder-count="7">
+<div style="flex:1;text-align:center;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:{{ b.labelColor }}">{{ b.label }}</div>
+</sc-for>
+</div>
+<div style="font-size:10.5px;font-style:italic;color:var(--color-neutral-700);padding-top:10px">Peak month {{ detail.peak }} {{ currency }}.</div>
+<div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-neutral-700);padding:14px 0 8px">{{ detail.cardsNote }}</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:56px;gap:6px">
+<sc-for list="{{ detail.cards }}" as="c" hint-placeholder-count="5">
+<div style="grid-column:{{ c.gc }};grid-row:{{ c.gr }};background:{{ c.bg }};border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden">
+<div style="font-size:10px;color:var(--color-neutral-700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</div>
+<div style="font-family:var(--font-heading);font-size:{{ c.size }};line-height:1.1;font-feature-settings:'tnum'">{{ c.amount }}</div>
+<div style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-700)">{{ c.date }}</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ detail.cardsEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="padding:10px 0;text-align:center;font-style:italic;font-size:12.5px;color:var(--color-neutral-700)">No transactions recorded yet.</div>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;right:0;bottom:0;left:0;z-index:80;display:flex;flex-direction:column;justify-content:flex-end">
+<div onClick="{{ closeSheet }}" style="position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(27,26,24,.42);animation:lg-fade .18s ease"></div>
+<div class="lg-s" style="position:relative;background:var(--color-bg);border-top:1px solid var(--color-text);box-shadow:var(--shadow-lg);max-height:660px;overflow-y:auto;animation:lg-up .26s cubic-bezier(.32,.72,0,1);padding:0 22px 34px">
+<div style="position:sticky;top:0;background:var(--color-bg);padding:16px 0 10px;display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid var(--color-divider)">
+<div style="font-family:var(--font-heading);font-size:23px;font-weight:500">{{ sheetTitle }}</div>
+<button onClick="{{ closeSheet }}" style="background:none;border:0;cursor:pointer;font-family:var(--font-body);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-600)">Cancel</button>
+</div>
+
+<div style="display:grid;gap:16px;padding-top:16px">
+
+<sc-if value="{{ showTypes }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">{{ typeLabel }}</div>
+<div style="display:flex;gap:0;border:1px solid var(--color-divider);border-radius:var(--radius-md);overflow:hidden">
+<sc-for list="{{ typeOptions }}" as="o" hint-placeholder-count="3">
+<button onClick="{{ o.select }}" style="flex:1;padding:9px 4px;background:{{ o.bg }};color:{{ o.fc }};border:0;border-right:1px solid var(--color-divider);cursor:pointer;font-family:var(--font-heading);font-size:13.5px;letter-spacing:.05em">{{ o.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHoldSheet }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:16px">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Asset class</div>
+<select value="{{ fClass }}" onChange="{{ onClass }}" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+<sc-for list="{{ classOptions }}" as="c" hint-placeholder-count="5"><option value="{{ c.value }}">{{ c.label }}</option></sc-for>
+</select>
+</div>
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Holding</div>
+<input value="{{ fName }}" onChange="{{ onName }}" placeholder="e.g. Tadawul portfolio" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+</div>
+<sc-if value="{{ isUnitHold }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:10px">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Quantity</div>
+<input value="{{ fQty }}" onChange="{{ onQty }}" inputmode="decimal" placeholder="0" class="input" style="width:100%;font-family:var(--font-body);font-size:14px;font-feature-settings:'tnum'">
+</div>
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Current price</div>
+<input value="{{ fPrice }}" onChange="{{ onPrice }}" inputmode="decimal" placeholder="0" class="input" style="width:100%;font-family:var(--font-body);font-size:14px;font-feature-settings:'tnum'">
+</div>
+</div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border:1px solid var(--color-accent-300);border-radius:var(--radius-md);background:var(--color-accent-100);padding:9px 12px">
+<span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--color-accent-800)">Holding value</span>
+<span style="font-family:var(--font-heading);font-size:19px;line-height:1;font-feature-settings:'tnum'">{{ unitValue }}</span>
+</div>
+</div>
+</sc-if>
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Cost basis</div>
+<input value="{{ fCost }}" onChange="{{ onCost }}" inputmode="decimal" placeholder="What you paid in total" class="input" style="width:100%;font-family:var(--font-body);font-size:14px;font-feature-settings:'tnum'">
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBudgetSheet }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Allocated month</div>
+<select value="{{ fMonth }}" onChange="{{ onMonth }}" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+<sc-for list="{{ monthOptions }}" as="m" hint-placeholder-count="4"><option value="{{ m.key }}">{{ m.label }}</option></sc-for>
+</select>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTxnSheet }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Date</div>
+<input type="date" value="{{ fDate }}" onChange="{{ onDate }}" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+</div>
+</sc-if>
+
+<sc-if value="{{ showTypes }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Category</div>
+<select value="{{ fCategory }}" onChange="{{ onCategory }}" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+<sc-for list="{{ catOptions }}" as="c" hint-placeholder-count="6"><option value="{{ c.value }}">{{ c.label }}</option></sc-for>
+</select>
+<sc-if value="{{ isNewCat }}" hint-placeholder-val="{{ false }}">
+<input value="{{ fNewCat }}" onChange="{{ onNewCat }}" placeholder="Name the new category" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ showValueField }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">{{ amountLabel }}</div>
+<div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--color-text);padding-bottom:6px">
+<span style="font-family:var(--font-heading);font-size:16px;color:var(--color-neutral-600)">{{ currency }}</span>
+<input value="{{ fAmount }}" onChange="{{ onAmount }}" inputmode="decimal" placeholder="0" style="flex:1;border:0;background:none;outline:none;font-family:var(--font-heading);font-size:30px;font-feature-settings:'tnum';color:var(--color-text);min-width:0">
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;gap:7px">
+<div style="font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--color-neutral-600)">Notes</div>
+<input value="{{ fNotes }}" onChange="{{ onNotes }}" placeholder="Optional" class="input" style="width:100%;font-family:var(--font-body);font-size:14px">
+</div>
+</sc-if>
+
+<sc-if value="{{ showTypes }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ toggleRec }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 12px;border:1px solid var(--color-divider);border-radius:var(--radius-md);background:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--color-text)">
+<div style="display:grid;gap:2px">
+<div style="font-size:14px">Repeats monthly</div>
+<div style="font-size:11px;font-style:italic;color:var(--color-neutral-600)">{{ recHint }}</div>
+</div>
+<div style="width:42px;height:24px;border:1px solid {{ recBorder }};border-radius:12px;position:relative;flex:none;background:{{ recTrack }}">
+<div style="position:absolute;top:3px;left:{{ recX }}px;width:16px;height:16px;border-radius:8px;background:{{ recKnob }};transition:left .16s ease"></div>
+</div>
+</button>
+</sc-if>
+
+<sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:12px;color:var(--color-accent-800);font-style:italic">{{ formErr }}</div>
+</sc-if>
+
+<div style="display:flex;gap:10px;padding-top:2px">
+<button onClick="{{ saveSheet }}" class="btn btn-primary" style="flex:1">{{ saveLabel }}</button>
+<sc-if value="{{ canDelete }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ deleteEntry }}" class="btn btn-secondary" style="color:var(--color-accent-800)">Delete</button>
+</sc-if>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+
+</x-dc>
+
+<!-- ============ App logic + seed data (+ persistence) ============ -->
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:402,&quot;height&quot;:874},&quot;currency&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;SAR&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;overspendWarnings&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+
+class Component extends DCLogic {
+  // ── persistence (added on implementation): the app remembers your data ──
+  componentDidMount() {
+    try {
+      var raw = window.localStorage.getItem('ledger.v1');
+      if (raw) {
+        var d = JSON.parse(raw), patch = {};
+        ['budget', 'holdings', 'txns', 'cur'].forEach(function (k) {
+          if (d[k] !== undefined && d[k] !== null) patch[k] = d[k];
+        });
+        if (Object.keys(patch).length) this.setState(patch);
+      }
+    } catch (e) { /* ignore corrupt / unavailable storage */ }
+  }
+  componentDidUpdate() {
+    try {
+      var s = this.state;
+      window.localStorage.setItem('ledger.v1', JSON.stringify({
+        budget: s.budget, holdings: s.holdings, txns: s.txns, cur: s.cur
+      }));
+    } catch (e) { /* storage full or blocked — stay in-memory */ }
+  }
+
+  state = {
+    tab: 'dash', monthKey: '2026-08', monthOpen: false, scope: 'month',
+    query: '', filter: 'All', sheet: null, form: null, err: '',
+    budget: [
+      { id: 'b1', month: '2026-08', type: 'Income', category: 'Salary', amount: 26000, rec: true },
+      { id: 'b2', month: '2026-08', type: 'Income', category: 'Freelance', amount: 3000, rec: false },
+      { id: 'b3', month: '2026-08', type: 'Expense', category: 'Rent', amount: 6500, rec: true },
+      { id: 'b4', month: '2026-08', type: 'Expense', category: 'Groceries', amount: 2400, rec: false },
+      { id: 'b5', month: '2026-08', type: 'Expense', category: 'Dining', amount: 1200, rec: false },
+      { id: 'b6', month: '2026-08', type: 'Expense', category: 'Utilities', amount: 700, rec: true },
+      { id: 'b7', month: '2026-08', type: 'Expense', category: 'Transport', amount: 900, rec: false },
+      { id: 'b8', month: '2026-08', type: 'Expense', category: 'Subscriptions', amount: 300, rec: true },
+      { id: 'b9', month: '2026-08', type: 'Expense', category: 'Health', amount: 500, rec: false },
+      { id: 'b10', month: '2026-08', type: 'Savings', category: 'Emergency Fund', amount: 2000, rec: true },
+      { id: 'b11', month: '2026-08', type: 'Savings', category: 'Investments', amount: 3000, rec: true },
+      { id: 'b12', month: '2026-08', type: 'Savings', category: 'House Deposit', amount: 4000, rec: false },
+      { id: 'b13', month: '2026-07', type: 'Income', category: 'Salary', amount: 26000, rec: true },
+      { id: 'b14', month: '2026-07', type: 'Expense', category: 'Rent', amount: 6500, rec: true },
+      { id: 'b15', month: '2026-07', type: 'Expense', category: 'Groceries', amount: 2400, rec: false },
+      { id: 'b16', month: '2026-07', type: 'Savings', category: 'Emergency Fund', amount: 2000, rec: true }
+    ],
+    holdings: [
+      { id: 'h1', cls: 'Real Estate', name: 'Apartment, Riyadh', value: 1850000, cost: 1500000, notes: 'Owned outright' },
+      { id: 'h2', cls: 'Stocks', name: 'Tadawul portfolio', qty: 1200, price: 200, value: 240000, cost: 195000, notes: '' },
+      { id: 'h3', cls: 'Stocks', name: 'US brokerage', qty: 550, price: 300, value: 165000, cost: 180000, notes: '' },
+      { id: 'h4', cls: 'ETFs', name: 'S&P 500 ETF', qty: 240, price: 500, value: 120000, cost: 96000, notes: 'Monthly contribution' },
+      { id: 'h5', cls: 'Crypto', name: 'Bitcoin', qty: 0.5, price: 96000, value: 48000, cost: 30000, notes: '' },
+      { id: 'h6', cls: 'Crypto', name: 'Ethereum', qty: 8, price: 2750, value: 22000, cost: 26000, notes: '' },
+      { id: 'h7', cls: 'Cash', name: 'Al Rajhi current', value: 65000, cost: 65000, notes: 'Everyday account' },
+      { id: 'h8', cls: 'Cash', name: 'SNB savings', value: 130000, cost: 130000, notes: 'Emergency fund' }
+    ],
+    txns: [
+      { id: 't1', date: '2026-08-01', type: 'Income', category: 'Salary', amount: 26000, notes: 'August payroll', rec: true },
+      { id: 't2', date: '2026-08-01', type: 'Expense', category: 'Rent', amount: 6500, notes: '', rec: true },
+      { id: 't3', date: '2026-08-02', type: 'Savings', category: 'Emergency Fund', amount: 2000, notes: '', rec: true },
+      { id: 't4', date: '2026-08-02', type: 'Expense', category: 'Groceries', amount: 640, notes: 'Weekly shop', rec: false },
+      { id: 't5', date: '2026-08-03', type: 'Expense', category: 'Subscriptions', amount: 300, notes: '', rec: true },
+      { id: 't6', date: '2026-08-04', type: 'Expense', category: 'Transport', amount: 210, notes: 'Fuel', rec: false },
+      { id: 't7', date: '2026-08-05', type: 'Expense', category: 'Dining', amount: 1385, notes: 'Family dinner', rec: false },
+      { id: 't8', date: '2026-08-06', type: 'Expense', category: 'Groceries', amount: 275, notes: 'Corner shop', rec: false },
+      { id: 't9', date: '2026-08-07', type: 'Expense', category: 'Utilities', amount: 690, notes: 'Electricity bill', rec: false },
+      { id: 't10', date: '2026-08-07', type: 'Savings', category: 'Investments', amount: 3000, notes: 'Monthly transfer', rec: true },
+      { id: 't11', date: '2026-08-08', type: 'Income', category: 'Freelance', amount: 1500, notes: 'Invoice 12', rec: false },
+      { id: 't12', date: '2026-07-01', type: 'Income', category: 'Salary', amount: 26000, notes: 'July payroll', rec: true },
+      { id: 't13', date: '2026-07-01', type: 'Expense', category: 'Rent', amount: 6500, notes: '', rec: true },
+      { id: 't14', date: '2026-07-09', type: 'Expense', category: 'Groceries', amount: 2210, notes: '', rec: false },
+      { id: 't15', date: '2026-07-28', type: 'Savings', category: 'Emergency Fund', amount: 2000, notes: '', rec: true }
+    ]
+  };
+
+  MONTHS = ['2026-06', '2026-07', '2026-08', '2026-09', '2026-10', '2026-11', '2026-12'];
+  MN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  SH = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  CATS = {
+    Income: ['Salary', 'Freelance', 'Bonus', 'Rental income', 'Other income'],
+    Expense: ['Rent', 'Groceries', 'Utilities', 'Transport', 'Dining', 'Subscriptions', 'Health', 'Education', 'Other'],
+    Savings: ['Emergency Fund', 'Investments', 'House Deposit', 'Hajj Fund']
+  };
+
+  CUR = [
+    { code: 'SAR', rate: 1 }, { code: 'USD', rate: 0.2667 }, { code: 'GBP', rate: 0.209 },
+    { code: 'EUR', rate: 0.229 }, { code: 'AED', rate: 0.9793 }
+  ];
+  ICONS = {
+    Salary: 'M2 6h20v12H2z M12 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4',
+    Freelance: 'M3 8h18v11H3z M9 8V6h6v2 M3 13h18',
+    Bonus: 'M12 3l2.4 5.2 5.6.6-4.2 3.8 1.2 5.6L12 15.3 6.9 18.2 8.1 12.6 4 8.8l5.6-.6z',
+    'Rental income': 'M3 10.5 12 4l9 6.5V20h-6v-6H9v6H3z',
+    'Other income': 'M12 4v16 M8 8h6a2 2 0 0 1 0 4H9a2 2 0 0 0 0 4h7',
+    Rent: 'M3 10.5 12 4l9 6.5V20h-6v-6H9v6H3z',
+    Groceries: 'M5 9h14l-1.5 10.5h-11z M9 9l3-6 3 6',
+    Utilities: 'M13 2 4 14h7l-1 8 9-12h-7z',
+    Transport: 'M4 14h16v4H4z M6 14l2-5h8l2 5 M7 18v2 M17 18v2',
+    Dining: 'M6 3v7a2 2 0 0 0 4 0V3 M8 12v9 M17 3c-1.5 2-2 4-2 6h4c0-2-.5-4-2-6z M17 9v12',
+    Subscriptions: 'M17 2l4 4-4 4 M3 11V9a4 4 0 0 1 4-4h14 M7 22l-4-4 4-4 M21 13v2a4 4 0 0 1-4 4H3',
+    Health: 'M12 20s-7-4.5-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.5-7 9-7 9z',
+    Education: 'M3 6l9-3 9 3-9 3z M7 10v5c0 1.7 2.2 3 5 3s5-1.3 5-3v-5',
+    Other: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z M12 8v4l3 2',
+    'Emergency Fund': 'M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z M9 12l2 2 4-4',
+    Investments: 'M3 17l6-6 4 4 7-7 M16 8h5v5',
+    'House Deposit': 'M3 10.5 12 4l9 6.5V20h-6v-6H9v6H3z M12 12v4',
+    'Hajj Fund': 'M12 3v18 M5 21V10l7-5 7 5v11 M9 21v-5h6v5'
+  };
+  iconFor(c) { return this.ICONS[c] || 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16z M12 9v6'; }
+  cur() { return this.state.cur || this.props.currency || 'SAR'; }
+  rate() { const c = this.CUR.filter(x => x.code === this.cur())[0]; return c ? c.rate : 1; }
+  fmt(n) { return Math.round(n * this.rate()).toLocaleString('en-US'); }
+  money(n) { return this.cur() + ' ' + this.fmt(n); }
+  mLabel(k) { return this.MN[Number(k.slice(5, 7)) - 1] + ' ' + k.slice(0, 4); }
+  mShort(k) { return this.SH[Number(k.slice(5, 7)) - 1] + ' ' + k.slice(0, 4); }
+  dLabel(d) { return Number(d.slice(8, 10)) + ' ' + this.SH[Number(d.slice(5, 7)) - 1]; }
+  cats(type) {
+    const base = this.CATS[type] || [];
+    const seen = new Set(base);
+    this.state.budget.concat(this.state.txns).forEach(r => {
+      if (r.type === type && !seen.has(r.category)) { seen.add(r.category); base.push(r.category); }
+    });
+    return Array.from(seen);
+  }
+
+  set(patch) { this.setState(s => ({ form: Object.assign({}, s.form, patch), err: '' })); }
+
+  openAdd = () => {
+    const s = this.state;
+    if (s.tab === 'portfolio') {
+      this.setState({ sheet: { kind: 'hold', id: null }, err: '', monthOpen: false, curOpen: false,
+        form: { cls: 'Stocks', name: '', amount: '', notes: '' } });
+    } else if (s.tab === 'budget') {
+      this.setState({ sheet: { kind: 'budget', id: null }, err: '', monthOpen: false,
+        form: { month: s.monthKey, type: 'Expense', category: 'Rent', newCat: '', amount: '', rec: false } });
+    } else {
+      const today = s.monthKey === '2026-08' ? '2026-08-08' : s.monthKey + '-01';
+      this.setState({ sheet: { kind: 'txn', id: null }, err: '', monthOpen: false, tab: s.tab === 'dash' ? 'activity' : s.tab,
+        form: { date: today, type: 'Expense', category: 'Groceries', newCat: '', amount: '', notes: '', rec: false } });
+    }
+  };
+
+  CLASSES = ['Real Estate', 'Stocks', 'ETFs', 'Crypto', 'Cash'];
+  isUnitClass(c) { return c === 'Stocks' || c === 'ETFs' || c === 'Crypto'; }
+  editHold(h) {
+    const r = this.rate();
+    this.setState({ sheet: { kind: 'hold', id: h.id }, err: '', monthOpen: false, curOpen: false,
+      form: { cls: h.cls, name: h.name, qty: h.qty ? String(h.qty) : '',
+        price: h.price ? String(Math.round(h.price * r * 100) / 100) : '',
+        amount: String(Math.round(h.value * r)), cost: h.cost ? String(Math.round(h.cost * r)) : '',
+        notes: h.notes } });
+  }
+  exportXlsx = () => {
+    const X = window.XLSX;
+    if (!X) { this.setState({ err: 'Spreadsheet export is still loading.' }); return; }
+    const s = this.state, mk = s.monthKey, r = this.rate(), cur = this.cur();
+    const conv = n => Math.round(n * r);
+    const types = ['Income', 'Expense', 'Savings'];
+    const bud = s.budget.filter(b => b.month === mk);
+    const txn = s.txns.filter(t => t.date.slice(0, 7) === mk);
+    const sum = (arr, f) => arr.filter(f).reduce((a, b) => a + (b.amount || 0), 0);
+    const wb = X.utils.book_new();
+    const summary = [['Ae — ' + this.mLabel(mk), '', ''], ['Currency', cur, ''], [], ['Type', 'Actual', 'Budget', 'Variance']];
+    types.forEach(t => {
+      const a = sum(txn, x => x.type === t), b = sum(bud, x => x.type === t);
+      summary.push([t, conv(a), conv(b), conv(b - a)]);
+    });
+    X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(summary), 'Summary');
+    const rows = [['Type', 'Category', 'Actual', 'Budget', 'Variance', '% used']];
+    types.forEach(t => {
+      const names = [];
+      bud.filter(b => b.type === t).forEach(b => names.push(b.category));
+      txn.filter(x => x.type === t).forEach(x => { if (names.indexOf(x.category) < 0) names.push(x.category); });
+      names.forEach(c => {
+        const a = sum(txn, x => x.type === t && x.category === c);
+        const b = sum(bud, x => x.type === t && x.category === c);
+        rows.push([t, c, conv(a), conv(b), conv(b - a), b > 0 ? Math.round(a / b * 100) + '%' : '']);
+      });
+    });
+    X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(rows), 'Budget vs actual');
+    const tr = [['Date', 'Type', 'Category', 'Amount', 'Notes', 'Recurring']];
+    txn.slice().sort((a, b) => a.date < b.date ? 1 : -1).forEach(t =>
+      tr.push([t.date, t.type, t.category, conv(t.amount), t.notes || '', t.rec ? 'Yes' : '']));
+    X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(tr), 'Transactions');
+    const pf = [['Asset class', 'Holding', 'Value', 'Notes']];
+    s.holdings.forEach(h => pf.push([h.cls, h.name, conv(h.value), h.notes || '']));
+    pf.push([], ['Net worth', '', conv(s.holdings.reduce((n, h) => n + h.value, 0)), '']);
+    X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(pf), 'Portfolio');
+    X.writeFile(wb, 'Ae-' + mk + '-' + cur + '.xlsx');
+  };
+  prevMonthKey(k) {
+    const i = this.MONTHS.indexOf(k);
+    return i > 0 ? this.MONTHS[i - 1] : null;
+  }
+  rollForward = () => {
+    const mk = this.state.monthKey, prev = this.prevMonthKey(mk);
+    if (!prev) return;
+    this.setState(s => {
+      const existing = s.budget.filter(b => b.month === mk);
+      const has = c => existing.some(e => e.category === c.category && e.type === c.type);
+      const copies = s.budget.filter(b => b.month === prev && !has(b))
+        .map((b, i) => ({ id: 'b' + Date.now() + '-' + i, month: mk, type: b.type, category: b.category, amount: b.amount, rec: b.rec }));
+      return { budget: s.budget.concat(copies) };
+    });
+  };
+  swipeStart = (id, e) => {
+    this._sx = e.clientX;
+    this.setState({ dragId: id, dragX: this.state.swipeId === id ? -88 : 0 });
+  };
+  swipeMove = e => {
+    if (!this.state.dragId) return;
+    const base = this.state.swipeId === this.state.dragId ? -88 : 0;
+    const dx = Math.max(-88, Math.min(0, base + (e.clientX - this._sx)));
+    this.setState({ dragX: dx });
+  };
+  swipeEnd = () => {
+    const { dragId, dragX } = this.state;
+    if (!dragId) return;
+    this.setState({ swipeId: dragX < -44 ? dragId : null, dragId: null, dragX: 0 });
+  };
+  deleteTxn = id => this.setState(s => ({ txns: s.txns.filter(t => t.id !== id), swipeId: null, dragId: null, dragX: 0 }));
+  openTxn = () => {
+    const s = this.state;
+    const today = s.monthKey === '2026-08' ? '2026-08-08' : s.monthKey + '-01';
+    this.setState({ sheet: { kind: 'txn', id: null }, err: '', monthOpen: false, curOpen: false, tab: 'activity',
+      form: { date: today, type: 'Expense', category: 'Groceries', newCat: '', amount: '', notes: '', rec: false } });
+  };
+  openAddType(t) {
+    this.setState(s => ({ sheet: { kind: 'budget', id: null }, err: '', monthOpen: false,
+      form: { month: s.monthKey, type: t, category: (this.CATS[t] || [''])[0], newCat: '', amount: '', rec: false } }));
+  }
+  editBudget(r) {
+    this.setState({ sheet: { kind: 'budget', id: r.id }, err: '', monthOpen: false,
+      form: { month: r.month, type: r.type, category: r.category, newCat: '', amount: String(Math.round(r.amount * this.rate())), rec: r.rec } });
+  }
+  editTxn(t) {
+    this.setState({ sheet: { kind: 'txn', id: t.id }, err: '', monthOpen: false,
+      form: { date: t.date, type: t.type, category: t.category, newCat: '', amount: String(Math.round(t.amount * this.rate())), notes: t.notes, rec: t.rec } });
+  }
+
+  closeSheet = () => this.setState({ sheet: null, form: null, err: '' });
+
+  save = () => {
+    const { sheet, form } = this.state;
+    const cat = form.category === '__new' ? form.newCat.trim() : form.category;
+    const amt = parseFloat(String(form.amount).replace(/[^0-9.]/g, '')) / this.rate();
+    if (sheet.kind === 'hold') {
+      const num = v => parseFloat(String(v || '').replace(/[^0-9.]/g, '')) || 0;
+      const unit = this.isUnitClass(form.cls);
+      const qty = num(form.qty), price = num(form.price) / this.rate();
+      const val = unit ? qty * price : amt;
+      const cost = num(form.cost) / this.rate();
+      if (!String(form.name || '').trim()) return this.setState({ err: 'Give the holding a name.' });
+      if (!val || val <= 0) return this.setState({ err: unit ? 'Enter a quantity and a price.' : 'Enter a value greater than zero.' });
+      const h = { id: sheet.id || 'h' + Date.now(), cls: form.cls, name: form.name.trim(),
+        qty: unit ? qty : undefined, price: unit ? price : undefined,
+        value: val, cost: cost || val, notes: form.notes || '' };
+      return this.setState(p => ({
+        holdings: sheet.id ? p.holdings.map(x => x.id === sheet.id ? h : x) : p.holdings.concat([h]),
+        sheet: null, form: null, err: ''
+      }));
+    }
+    if (!cat) return this.setState({ err: 'Give the new category a name.' });
+    if (!amt || amt <= 0) return this.setState({ err: 'Enter an amount greater than zero.' });
+    if (sheet.kind === 'budget') {
+      const rec = { id: sheet.id || 'b' + Date.now(), month: form.month, type: form.type, category: cat, amount: amt, rec: form.rec };
+      this.setState(s => ({
+        budget: sheet.id ? s.budget.map(b => b.id === sheet.id ? rec : b) : s.budget.concat([rec]),
+        monthKey: form.month, sheet: null, form: null, err: ''
+      }));
+    } else {
+      const rec = { id: sheet.id || 't' + Date.now(), date: form.date, type: form.type, category: cat, amount: amt, notes: form.notes, rec: form.rec };
+      this.setState(s => ({
+        txns: sheet.id ? s.txns.map(t => t.id === sheet.id ? rec : t) : s.txns.concat([rec]),
+        monthKey: form.date.slice(0, 7), sheet: null, form: null, err: ''
+      }));
+    }
+  };
+
+  del = () => {
+    const { sheet } = this.state;
+    this.setState(s => ({
+      budget: sheet.kind === 'budget' ? s.budget.filter(b => b.id !== sheet.id) : s.budget,
+      txns: sheet.kind === 'txn' ? s.txns.filter(t => t.id !== sheet.id) : s.txns,
+      holdings: sheet.kind === 'hold' ? s.holdings.filter(h => h.id !== sheet.id) : s.holdings,
+      sheet: null, form: null, err: ''
+    }));
+  };
+
+  renderVals() {
+    const s = this.state, mk = s.monthKey;
+    const warnOn = this.props.overspendWarnings ?? true;
+    const ACC = 'var(--color-accent)', DEEP = 'var(--color-accent-800)', MUT = 'var(--color-neutral-600)';
+    const SER = { Income: '#6e8b62', Expense: '#b17457', Savings: '#6c7a8b' };
+    const SERT = { Income: '#4a6640', Expense: '#7e4c35', Savings: '#47536b' };
+    const ytd = s.scope === 'year' && s.tab === 'dash';
+    const bud = s.budget.filter(b => ytd ? b.month <= mk : b.month === mk);
+    const txn = s.txns.filter(t => ytd ? t.date.slice(0, 7) <= mk : t.date.slice(0, 7) === mk);
+    const sum = (arr, f) => arr.filter(f).reduce((a, b) => a + b.amount, 0);
+    const types = ['Income', 'Expense', 'Savings'];
+
+    const summary = types.map(t => {
+      const a = sum(txn, x => x.type === t), b = sum(bud, x => x.type === t);
+      const pct = b > 0 ? Math.min(100, Math.round(a / b * 100)) : (a > 0 ? 100 : 0);
+      const over = t === 'Expense' && a > b && b > 0;
+      const diff = b - a;
+      let note = b === 0 ? 'no budget set' : over ? this.fmt(a - b) + ' over' :
+        t === 'Income' ? this.fmt(Math.max(0, diff)) + ' short' :
+        t === 'Expense' ? this.fmt(diff) + ' left' : this.fmt(Math.max(0, diff)) + ' to go';
+      return { label: t === 'Expense' ? 'Expenses' : t, actual: this.money(a), budget: this.fmt(b),
+        pct, barColor: over ? DEEP : ACC, note, noteColor: over && warnOn ? DEEP : MUT };
+    });
+
+    const breakdown = types.map(t => {
+      const names = [];
+      bud.filter(b => b.type === t).forEach(b => names.push(b.category));
+      txn.filter(x => x.type === t).forEach(x => { if (names.indexOf(x.category) < 0) names.push(x.category); });
+      const rows = names.map(c => {
+        const a = sum(txn, x => x.type === t && x.category === c);
+        const b = sum(bud, x => x.type === t && x.category === c);
+        const over = t !== 'Income' && b > 0 && a > b;
+        const pct = b > 0 ? Math.min(100, Math.round(a / b * 100)) : (a > 0 ? 100 : 0);
+        const d = b - a;
+        return { category: c, actual: this.fmt(a), budget: this.fmt(b), pct,
+          pctLabel: b > 0 ? Math.round(a / b * 100) + '%' : '—', icon: this.iconFor(c),
+          open: () => this.setState({ detail: { type: t, category: c } }),
+          spent: this.fmt(a) + ' of ' + this.fmt(b),
+          barColor: over ? DEEP : SER[t], tagShow: over && warnOn ? 'inline-block' : 'none',
+          variance: b === 0 ? 'unbudgeted' : (d >= 0 ? '+' : '\u2212') + this.fmt(Math.abs(d)),
+          varColor: over ? DEEP : MUT };
+      });
+      const ga = sum(txn, x => x.type === t), gb = sum(bud, x => x.type === t);
+      return { type: t === 'Expense' ? 'Expenses' : t, rows,
+        gActual: this.fmt(ga), gBudget: this.fmt(gb),
+        gPct: gb > 0 ? Math.round(ga / gb * 100) + '%' : '—',
+        gColor: t !== 'Income' && gb > 0 && ga > gb ? DEEP : SERT[t] };
+    }).filter(g => g.rows.length);
+
+    const C = 251.33;
+    const donuts = types.map(t => {
+      const a = sum(txn, x => x.type === t), b = sum(bud, x => x.type === t);
+      const pct = b > 0 ? Math.min(100, Math.round(a / b * 100)) : (a > 0 ? 100 : 0);
+      return { label: t === 'Expense' ? 'Expenses' : t, color: SER[t],
+        dash: (C * pct / 100).toFixed(1) + ' ' + C, pctLabel: pct + '%',
+        actual: this.fmt(a), budget: this.fmt(b) };
+    });
+
+    const CW = 318, CH = 112;
+    const vals = this.MONTHS.map(k => {
+      const mt = s.txns.filter(x => x.date.slice(0, 7) === k);
+      return types.map(t => sum(mt, x => x.type === t));
+    });
+    const bvals = this.MONTHS.map(k => {
+      const mb = s.budget.filter(x => x.month === k);
+      return types.map(t => sum(mb, x => x.type === t));
+    });
+    const cum = arr => { const run = [0, 0, 0]; return arr.map(r => r.map((v, j) => (run[j] += v))); };
+    const cumulative = s.chartMode === 'cumulative';
+    const A = cumulative ? cum(vals) : vals;
+    const B = cumulative ? cum(bvals) : bvals;
+    const lastIdx = Math.max(0, this.MONTHS.indexOf(mk));
+    const max = Math.max(1, A.concat(B).reduce((m, r) => Math.max(m, r[1]), 0));
+    const step = this.MONTHS.length > 1 ? (CW - 12) / (this.MONTHS.length - 1) : 0;
+    const yOf = v => (CH - 8 - (v / max) * (CH - 20)).toFixed(1);
+    const line = (src, ti, upto) => src.slice(0, upto == null ? src.length : upto + 1)
+      .map((r, i) => (i ? 'L' : 'M') + (6 + i * step).toFixed(1) + ' ' + yOf(r[ti])).join(' ');
+    const pathFor = ti => line(A, ti, cumulative ? lastIdx : null);
+    const bPathFor = ti => line(B, ti, null);
+    const cmax = Math.max(1, this.MONTHS.reduce((m, _, i) => Math.max(m, A[i][1], B[i][1]), 0));
+    const chartBars = this.MONTHS.map((k, i) => {
+      const future = cumulative && i > lastIdx;
+      const a = future ? 0 : A[i][1], b = future ? 0 : B[i][1];
+      const over = a > b && b > 0;
+      const hR = Math.round(Math.max(0, b - a) / cmax * 100);
+      return { label: this.SH[Number(k.slice(5, 7)) - 1],
+        hA: Math.round(a / cmax * 100), hR,
+        rA: hR > 0 ? '0' : '3px 3px 0 0',
+        value: a ? this.fmt(a) : '', aColor: over ? '#7e4c35' : '#b17457',
+        labelColor: k === mk ? 'var(--color-text)' : 'var(--color-neutral-700)' };
+    });
+    const chart = {
+      bars: chartBars,
+      modeOptions: [{ k: 'monthly', l: 'Per month' }, { k: 'cumulative', l: 'Cumulative' }].map(o => ({
+        label: o.l,
+        bg: (s.chartMode || 'monthly') === o.k ? 'var(--color-accent-100)' : 'transparent',
+        fc: (s.chartMode || 'monthly') === o.k ? 'var(--color-accent-800)' : MUT,
+        select: () => this.setState({ chartMode: o.k })
+      })),
+      note: cumulative ? 'Running totals; the solid line stops at ' + this.mShort(mk) + '.' : 'Each month on its own.',
+      onMonth: e => this.setState({ monthKey: e.target.value }),
+      inc: pathFor(0), exp: pathFor(1), sav: pathFor(2),
+      binc: bPathFor(0), bexp: bPathFor(1), bsav: bPathFor(2),
+      max: this.fmt(max),
+      months: this.MONTHS.map((k, i) => ({ label: this.SH[Number(k.slice(5, 7)) - 1], color: k === mk ? 'var(--color-text)' : 'var(--color-neutral-700)' })),
+      markX: (6 + this.MONTHS.indexOf(mk) * step).toFixed(1)
+    };
+
+    const expNames = [];
+    bud.filter(x => x.type === 'Expense').forEach(x => { if (expNames.indexOf(x.category) < 0) expNames.push(x.category); });
+    txn.filter(x => x.type === 'Expense').forEach(x => { if (expNames.indexOf(x.category) < 0) expNames.push(x.category); });
+    const ranked = expNames.map(c => {
+      const a = sum(txn, x => x.type === 'Expense' && x.category === c);
+      const b = sum(bud, x => x.type === 'Expense' && x.category === c);
+      return { category: c, raw: a, actual: this.fmt(a), budget: b, over: b > 0 && a > b };
+    }).sort((x, y) => y.raw - x.raw);
+    const rankMax = ranked.length ? ranked[0].raw : 1;
+    const rankedRows = ranked.map((r, i) => ({
+      rank: String(i + 1).padStart(2, '0'), category: r.category, actual: r.actual,
+      pct: Math.round(r.raw / rankMax * 100),
+      barColor: r.over && warnOn ? 'var(--color-accent-800)' : SER.Expense,
+      note: r.budget > 0 ? (r.over ? this.fmt(r.raw - r.budget) + ' over budget' : this.fmt(r.budget - r.raw) + ' left of ' + this.fmt(r.budget)) : 'unbudgeted'
+    }));
+
+    const PAL = ['#b17457', '#7e6a5c', '#c8956f', '#4a4947', '#a3866a', '#6c7a8b', '#d8b79a', '#8a5b45'];
+    const segTotal = ranked.reduce((n, r) => n + r.raw, 0) || 1;
+    let acc = 0;
+    const donutSegs = ranked.filter(r => r.raw > 0).map((r, i) => {
+      const len = C * r.raw / segTotal;
+      const seg = { category: r.category, color: PAL[i % PAL.length],
+        dash: len.toFixed(1) + ' ' + (C - len).toFixed(1), offset: (-acc).toFixed(1),
+        pct: Math.round(r.raw / segTotal * 100) + '%', amount: r.actual,
+        icon: this.iconFor(r.category),
+        open: () => this.setState({ spend: { category: r.category } }) };
+      acc += len;
+      return seg;
+    });
+
+    const sorted = txn.slice().sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (a.id < b.id ? 1 : -1));
+    const recent = sorted.slice(0, 3).map(t => ({
+      category: t.category,
+      sub: this.dLabel(t.date) + (t.notes ? ' \u00b7 ' + t.notes : '') + (t.rec ? ' \u00b7 repeats' : ''),
+      signed: (t.type === 'Income' ? '+' : '\u2212') + this.fmt(t.amount),
+      color: SERT[t.type]
+    }));
+
+    const overCount = breakdown.reduce((n, g) => n + g.rows.filter(r => r.tagShow === 'inline-block').length, 0);
+
+    const tagBorder = { Income: 'var(--color-accent-300)', Expense: 'var(--color-divider)', Savings: 'var(--color-neutral-400)' };
+    const tagColor = { Income: 'var(--color-accent-700)', Expense: 'var(--color-neutral-700)', Savings: 'var(--color-neutral-800)' };
+    const SHADES = ['#f9f7f0'];
+    const budgetGroups = types.map(t => ({
+      type: t,
+      label: t === 'Expense' ? 'Expenses' : t,
+      total: this.fmt(sum(bud, x => x.type === t)),
+      count: bud.filter(x => x.type === t).length + (bud.filter(x => x.type === t).length === 1 ? ' line' : ' lines'),
+      addLabel: 'Add ' + (t === 'Income' ? 'an income' : t === 'Expense' ? 'an expense' : 'a savings') + ' line',
+      add: () => this.openAddType(t),
+      rows: bud.filter(x => x.type === t).sort((a, b) => a.category.localeCompare(b.category)).map((r, i) => {
+        const a = sum(txn, x => x.type === r.type && x.category === r.category);
+        return { category: r.category, type: r.type, amount: this.fmt(r.amount),
+          tagBorder: tagBorder[r.type], tagColor: tagColor[r.type],
+          bg: SHADES[i % SHADES.length], recShow: r.rec ? 'inline' : 'none',
+          sub: this.fmt(a) + ' recorded \u00b7 ' + (r.amount - a >= 0 ? this.fmt(r.amount - a) + ' remaining' : this.fmt(a - r.amount) + ' over'),
+          edit: () => this.editBudget(r) };
+      })
+    })).filter(g => g.rows.length);
+    const budgetTotals = types.map(t => ({ label: t === 'Expense' ? 'Expenses' : t, amount: this.fmt(sum(bud, x => x.type === t)) }));
+    const left = sum(bud, x => x.type === 'Income') - sum(bud, x => x.type === 'Expense') - sum(bud, x => x.type === 'Savings');
+
+    const q = s.query.trim().toLowerCase();
+    const filtered = sorted.filter(t =>
+      (s.filter === 'All' || t.type === s.filter) &&
+      (!q || t.category.toLowerCase().indexOf(q) >= 0 || (t.notes || '').toLowerCase().indexOf(q) >= 0));
+    const balances = {};
+    let run = 0;
+    txn.slice().sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : (a.id < b.id ? -1 : 1))
+      .forEach(t => { run += t.type === 'Income' ? t.amount : -t.amount; balances[t.id] = run; });
+    const groups = [];
+    filtered.forEach(t => {
+      const lab = this.dLabel(t.date);
+      let g = groups[groups.length - 1];
+      if (!g || g.label !== lab) { g = { label: lab, items: [] }; groups.push(g); }
+      const open = s.swipeId === t.id, dragging = s.dragId === t.id;
+      g.items.push({ category: t.category, recShow: t.rec ? 'inline' : 'none',
+        sub: t.notes || t.type, signed: (t.type === 'Income' ? '+' : '\u2212') + this.fmt(t.amount),
+        color: SERT[t.type], balance: this.fmt(balances[t.id]),
+        tx: (dragging ? s.dragX : open ? -88 : 0) + 'px',
+        trans: dragging ? 'none' : 'transform .18s ease',
+        down: e => this.swipeStart(t.id, e),
+        remove: () => this.deleteTxn(t.id),
+        edit: () => { if (s.swipeId === t.id) { this.setState({ swipeId: null }); return; } this.editTxn(t); } });
+    });
+
+    const filters = ['All', 'Income', 'Expense', 'Savings'].map(f => ({
+      label: f === 'Expense' ? 'Expenses' : f,
+      bc: s.filter === f ? 'var(--color-accent)' : 'var(--color-divider)',
+      fc: s.filter === f ? 'var(--color-accent-800)' : MUT,
+      bg: s.filter === f ? 'var(--color-accent-100)' : 'transparent',
+      select: () => this.setState({ filter: f })
+    }));
+
+    const monthOptions = this.MONTHS.map(k => ({
+      key: k, label: this.mLabel(k),
+      note: s.budget.filter(b => b.month === k).length ? this.fmt(sum(s.budget.filter(b => b.month === k), x => x.type === 'Expense')) + ' budgeted' : 'no budget',
+      color: k === mk ? 'var(--color-accent-700)' : 'var(--color-text)',
+      select: () => this.setState({ monthKey: k, monthOpen: false })
+    }));
+
+    const f = s.form || {};
+    const isB = !!s.sheet && s.sheet.kind === 'budget';
+    const catList = this.cats(f.type || 'Expense').map(c => ({ value: c, label: c }));
+    catList.push({ value: '__new', label: 'New category\u2026' });
+
+    return {
+      screenName: s.tab === 'dash' ? 'Dashboard' : s.tab === 'budget' ? 'Budget' : s.tab === 'portfolio' ? 'Portfolio' : 'Activity',
+      isPortfolio: s.tab === 'portfolio',
+      goPortfolio: () => this.setState({ tab: 'portfolio', monthOpen: false, curOpen: false }),
+      pfCol: s.tab === 'portfolio' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      pfUl: s.tab === 'portfolio' ? ACC : 'transparent',
+      isHoldSheet: !!s.sheet && s.sheet.kind === 'hold',
+      showNotes: !!s.sheet && s.sheet.kind !== 'budget',
+      amountLabel: !!s.sheet && s.sheet.kind === 'hold' ? 'Current value' : 'Amount',
+      isUnitHold: !!s.sheet && s.sheet.kind === 'hold' && this.isUnitClass((s.form || {}).cls),
+      showValueField: !!s.sheet && (s.sheet.kind !== 'hold' || !this.isUnitClass((s.form || {}).cls)),
+      fQty: (s.form || {}).qty || '', onQty: e => this.set({ qty: e.target.value }),
+      fPrice: (s.form || {}).price || '', onPrice: e => this.set({ price: e.target.value }),
+      fCost: (s.form || {}).cost || '', onCost: e => this.set({ cost: e.target.value }),
+      unitValue: (() => {
+        const f = s.form || {}; const num = v => parseFloat(String(v || '').replace(/[^0-9.]/g, '')) || 0;
+        const v = num(f.qty) * num(f.price);
+        return v ? this.cur() + ' ' + Math.round(v).toLocaleString('en-US') : '—';
+      })(),
+      netLeft: this.money(sum(txn, x => x.type === 'Income') - sum(txn, x => x.type === 'Expense') - sum(txn, x => x.type === 'Savings')),
+      popLeft: s.tab === 'dash' ? 'auto' : '20px',
+      popRight: s.tab === 'dash' ? '20px' : 'auto',
+      popTop: s.tab === 'dash' ? '218px' : '152px',
+      todayLabel: (() => {
+        const d = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        return days[d.getDay()] + ', ' + d.getDate() + ' ' + this.MN[d.getMonth()] + ' ' + d.getFullYear();
+      })(),
+      netLeftColor: (sum(txn, x => x.type === 'Income') - sum(txn, x => x.type === 'Expense') - sum(txn, x => x.type === 'Savings')) < 0 ? '#b17457' : '#6e8b62',
+      showTypes: !!s.sheet && s.sheet.kind !== 'hold',
+      classOptions: this.CLASSES.map(c => ({ value: c, label: c })),
+      fClass: (s.form || {}).cls || 'Stocks', onClass: e => this.set({ cls: e.target.value }),
+      fName: (s.form || {}).name || '', onName: e => this.set({ name: e.target.value }),
+      curLabel: this.cur(), curOpen: !!s.curOpen,
+      toggleCur: () => this.setState(p => ({ curOpen: !p.curOpen, monthOpen: false })),
+      curOptions: this.CUR.map(c => ({ code: c.code,
+        rateNote: c.code === 'SAR' ? 'base' : '1 SAR = ' + c.rate.toFixed(3),
+        color: c.code === this.cur() ? 'var(--color-accent-700)' : 'var(--color-text)',
+        select: () => this.setState({ cur: c.code, curOpen: false }) })),
+      monthStrip: this.MONTHS.map(k => {
+        const mb = s.budget.filter(x => x.month === k);
+        const out = sum(mb, x => x.type !== 'Income');
+        return { label: this.SH[Number(k.slice(5, 7)) - 1],
+          total: mb.length ? this.fmt(out) : '—',
+          note: mb.length ? 'allocated' : 'no plan',
+          bg: k === mk ? 'var(--color-accent-100)' : 'transparent',
+          bc: k === mk ? 'var(--color-accent)' : 'var(--color-divider)',
+          fc: k === mk ? 'var(--color-accent-800)' : 'var(--color-text)',
+          select: () => this.setState({ monthKey: k }) };
+      }),
+      monthLabel: this.mShort(mk), monthOpen: s.monthOpen, monthOptions, monthKeyVal: mk,
+      toggleMonth: () => this.setState(p => ({ monthOpen: !p.monthOpen })),
+      isDash: s.tab === 'dash', isBudget: s.tab === 'budget', isActivity: s.tab === 'activity',
+      goDash: () => this.setState({ tab: 'dash', monthOpen: false }),
+      goBudget: () => this.setState({ tab: 'budget', monthOpen: false }),
+      goActivity: () => this.setState({ tab: 'activity', monthOpen: false }),
+      dashCol: s.tab === 'dash' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      budCol: s.tab === 'budget' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      actCol: s.tab === 'activity' ? 'var(--color-accent-700)' : 'var(--color-neutral-700)',
+      dashUl: s.tab === 'dash' ? ACC : 'transparent',
+      budUl: s.tab === 'budget' ? ACC : 'transparent',
+      actUl: s.tab === 'activity' ? ACC : 'transparent',
+      openTxn: this.openTxn,
+      showAdd: s.tab !== 'dash', addLabel: s.tab === 'budget' ? 'Item' : s.tab === 'portfolio' ? 'Holding' : 'Entry', openAdd: this.openAdd,
+      scopeOptions: [
+        { label: this.mShort(mk), key: 'month' }, { label: 'All Year', key: 'year' }
+      ].map(o => ({ label: o.label,
+        bg: s.scope === o.key ? 'var(--color-accent-100)' : 'transparent',
+        fc: s.scope === o.key ? 'var(--color-accent-800)' : MUT,
+        select: () => this.setState({ scope: o.key }) })),
+      scopeNote: ytd ? 'Cumulative from January through ' + this.mLabel(mk) + '.' : 'This month only.',
+      summary, breakdown, recent, donuts, chart, rankedRows,
+      rankedEmpty: rankedRows.length === 0,
+      hasWarn: warnOn && overCount > 0,
+      warn: (overCount === 1 ? 'One category is over its budget ' : overCount + ' categories are over budget ') + (ytd ? 'year to date.' : 'this month.'),
+      rankedNote: ytd ? 'Expenses year to date, largest first.' : 'Expenses this month, largest first.',
+      budgetGroups, budgetEmpty: bud.length === 0,
+      budgetNote: bud.length === 0 ? 'Add income, expense and savings lines to plan this month.'
+        : (left >= 0 ? this.money(left) + ' of planned income is still unallocated.' : this.money(-left) + ' more is allocated than planned income.'),
+      query: s.query, onQuery: e => this.setState({ query: e.target.value }),
+      filters, txGroups: groups, activityEmpty: filtered.length === 0,
+      swipeMove: this.swipeMove, swipeEnd: this.swipeEnd,
+      actIn: this.fmt(sum(txn, x => x.type === 'Income')),
+      actOut: this.fmt(sum(txn, x => x.type === 'Expense') + sum(txn, x => x.type === 'Savings')),
+      actNet: this.money(sum(txn, x => x.type === 'Income') - sum(txn, x => x.type === 'Expense') - sum(txn, x => x.type === 'Savings')),
+      rollLabel: this.prevMonthKey(mk) ? 'Copy ' + this.mShort(this.prevMonthKey(mk)) : '',
+      canRoll: !!this.prevMonthKey(mk) && s.budget.some(b => b.month === this.prevMonthKey(mk)),
+      rollForward: this.rollForward,
+      fxNote: this.cur() === 'SAR' ? 'Ledger currency' : 'Display only — every figure converted from SAR at today\u2019s rate',
+      activityCount: filtered.length + (filtered.length === 1 ? ' entry' : ' entries'),
+      sheetOpen: !!s.sheet, isBudgetSheet: isB, isTxnSheet: !!s.sheet && s.sheet.kind === 'txn',
+      sheetTitle: !s.sheet ? '' : (s.sheet.id ? 'Edit ' : 'New ') + (isB ? 'budget item' : s.sheet.kind === 'hold' ? 'holding' : 'transaction'),
+      saveLabel: s.sheet && s.sheet.id ? 'Save changes' : (isB ? 'Add to budget' : s.sheet && s.sheet.kind === 'hold' ? 'Add holding' : 'Record entry'),
+      canDelete: !!(s.sheet && s.sheet.id),
+      typeLabel: isB ? 'Budget type' : 'Transaction type',
+      typeOptions: types.map(t => ({
+        label: t === 'Expense' ? 'Expense' : t,
+        bg: f.type === t ? 'var(--color-accent-100)' : 'transparent',
+        fc: f.type === t ? 'var(--color-accent-800)' : MUT,
+        select: () => this.set({ type: t, category: (this.CATS[t] || [''])[0] })
+      })),
+      catOptions: catList, isNewCat: f.category === '__new',
+      currency: this.cur(),
+      fMonth: f.month || mk, onMonth: e => this.set({ month: e.target.value }),
+      fDate: f.date || mk + '-01', onDate: e => this.set({ date: e.target.value }),
+      fCategory: f.category || '', onCategory: e => this.set({ category: e.target.value }),
+      fNewCat: f.newCat || '', onNewCat: e => this.set({ newCat: e.target.value }),
+      fAmount: f.amount || '', onAmount: e => this.set({ amount: e.target.value }),
+      fNotes: f.notes || '', onNotes: e => this.set({ notes: e.target.value }),
+      toggleRec: () => this.set({ rec: !f.rec }),
+      recHint: isB ? 'Carries this allocation into every later month.' : 'Marks this as a standing monthly entry.',
+      recTrack: f.rec ? 'var(--color-accent-100)' : 'transparent',
+      recBorder: f.rec ? 'var(--color-accent)' : 'var(--color-neutral-400)',
+      recKnob: f.rec ? 'var(--color-accent)' : 'var(--color-neutral-400)',
+      recX: f.rec ? 22 : 3,
+      donutSegs, donutTotal: this.fmt(segTotal), donutEmpty: donutSegs.length === 0,
+      spendOpen: !!s.spend,
+      spend: (() => {
+        const sp = s.spend; if (!sp) return { bars: [] };
+        const items = txn.filter(x => x.type === 'Expense' && x.category === sp.category)
+          .sort((a, b) => a.date < b.date ? -1 : 1);
+        const byDate = [];
+        items.forEach(t => {
+          const l = this.dLabel(t.date);
+          const g = byDate[byDate.length - 1];
+          if (g && g.label === l) { g.v += t.amount; g.n += 1; } else byDate.push({ label: l, v: t.amount, n: 1 });
+        });
+        const mx = byDate.reduce((m, b) => Math.max(m, b.v), 1);
+        const tot = items.reduce((n, t) => n + t.amount, 0);
+        return { category: sp.category, icon: this.iconFor(sp.category),
+          total: this.money(tot), count: items.length + (items.length === 1 ? ' entry' : ' entries'),
+          empty: byDate.length === 0,
+          bars: byDate.map(b => ({ label: b.label, h: Math.round(b.v / mx * 100), value: this.fmt(b.v) })) };
+      })(),
+      closeSpend: () => this.setState({ spend: null }),
+      netWorth: this.money(s.holdings.reduce((n, h) => n + h.value, 0)),
+      holdingCount: s.holdings.length + (s.holdings.length === 1 ? ' holding' : ' holdings'),
+      assetClasses: (() => {
+        const total = s.holdings.reduce((n, h) => n + h.value, 0) || 1;
+        const R = 60, CX = 130, CY = 96, C2 = 2 * Math.PI * R;
+        let a2 = 0, frac = 0;
+        return this.CLASSES.map((c, i) => {
+          const v = s.holdings.filter(h => h.cls === c).reduce((n, h) => n + h.value, 0);
+          const f = v / total, len = C2 * f;
+          const mid = (frac + f / 2) * 2 * Math.PI - Math.PI / 2;
+          const cos = Math.cos(mid), sin = Math.sin(mid);
+          const right = cos >= 0;
+          const seg = { cls: c, value: this.fmt(v), pct: Math.round(f * 100) + '%',
+            width: Math.round(f * 100), color: PAL[i % PAL.length],
+            dash: len.toFixed(1) + ' ' + (C2 - len).toFixed(1), offset: (-a2).toFixed(1),
+            show: v > 0 ? 'grid' : 'none', open: () => this.setState({ asset: { cls: c } }),
+            points: [CX + cos * (R + 8), CY + sin * (R + 8), CX + cos * (R + 20), CY + sin * (R + 20),
+              (right ? CX + cos * (R + 20) + 10 : CX + cos * (R + 20) - 10), CY + sin * (R + 20)]
+              .map(n => n.toFixed(1)).reduce((a, n, j) => j % 2 ? a + ',' + n : (a ? a + ' ' + n : n), ''),
+            labLeft: (((right ? CX + cos * (R + 20) + 13 : CX + cos * (R + 20) - 13) / 260) * 100).toFixed(2) + '%',
+            labTop: (((CY + sin * (R + 20)) / 192) * 100).toFixed(2) + '%',
+            labTransform: right ? 'translate(0,-50%)' : 'translate(-100%,-50%)',
+            labAlign: right ? 'left' : 'right',
+            labelShow: v > 0 ? 'block' : 'none' };
+          a2 += len; frac += f; return seg;
+        });
+      })(),
+      holdingGroups: this.CLASSES.map((c, i) => ({
+        cls: c, color: PAL[i % PAL.length],
+        total: this.fmt(s.holdings.filter(h => h.cls === c).reduce((n, h) => n + h.value, 0)),
+        rows: s.holdings.filter(h => h.cls === c).sort((a, b) => b.value - a.value).map(h => {
+          const base = h.cost || h.value;
+          const roi = base > 0 ? (h.value - base) / base * 100 : 0;
+          return { name: h.name, value: this.fmt(h.value),
+            notes: h.qty ? this.fmt(h.qty * 1) + ' × ' + this.fmt(h.price) : (h.notes || c),
+            roi: (roi > 0 ? '+' : roi < 0 ? '\u2212' : '') + Math.abs(roi).toFixed(1) + '%',
+            roiColor: roi > 0 ? '#6e8b62' : roi < 0 ? '#b17457' : 'var(--color-neutral-700)',
+            edit: () => this.editHold(h) };
+        })
+      })).filter(g => g.rows.length),
+      portfolioEmpty: s.holdings.length === 0,
+      exportXlsx: this.exportXlsx,
+      assetOpen: !!s.asset,
+      closeAsset: () => this.setState({ asset: null }),
+      asset: (() => {
+        const a = s.asset; if (!a) return { bars: [] };
+        const hs = s.holdings.filter(h => h.cls === a.cls);
+        const val = hs.reduce((n, h) => n + h.value, 0);
+        const base = hs.reduce((n, h) => n + (h.cost || h.value), 0) || 1;
+        const last = Math.max(1, this.MONTHS.indexOf(mk));
+        const series = this.MONTHS.map((k, i) => i <= last ? base + (val - base) * (i / last) : 0);
+        const mx = Math.max(1, ...series);
+        const roi = (val - base) / base * 100;
+        const idx = this.CLASSES.indexOf(a.cls);
+        return { cls: a.cls, color: PAL[idx % PAL.length], value: this.money(val), cost: this.fmt(base),
+          count: hs.length + (hs.length === 1 ? ' holding' : ' holdings'),
+          roi: (roi > 0 ? '+' : roi < 0 ? '\u2212' : '') + Math.abs(roi).toFixed(1) + '%',
+          roiColor: roi > 0 ? '#6e8b62' : roi < 0 ? '#b17457' : 'var(--color-neutral-700)',
+          bars: this.MONTHS.map((k, i) => ({
+            label: this.SH[Number(k.slice(5, 7)) - 1],
+            h: series[i] ? Math.round(series[i] / mx * 100) : 0,
+            value: series[i] ? this.fmt(series[i]) : '',
+            op: k === mk ? '1' : '.72'
+          })) };
+      })(),
+      detailOpen: !!s.detail,
+      detail: (() => {
+        const d = s.detail; if (!d) return { bars: [], months: [] };
+        const per = this.MONTHS.map(k => ({
+          key: k,
+          a: sum(s.txns.filter(x => x.date.slice(0, 7) === k), x => x.type === d.type && x.category === d.category),
+          b: sum(s.budget.filter(x => x.month === k), x => x.type === d.type && x.category === d.category)
+        }));
+        const dytd = s.detailMode === 'ytd';
+        let run = 0;
+        const cutoff = Math.max(0, this.MONTHS.indexOf(mk));
+        const shown = per.map((r, i) => { run += r.a; return { key: r.key, a: dytd ? (i <= cutoff ? run : 0) : r.a, b: r.b }; });
+        const dmax = Math.max(1, shown.reduce((m, r) => Math.max(m, r.a), 0));
+        const total = per.reduce((n, r) => n + r.a, 0);
+        const TINT = ['#e4d9cc', '#dde1d6', '#e9dcd4', '#d9ddd9', '#efe4d2', '#e2ddd2', '#ded6cc'];
+        let list = s.txns.filter(x => x.type === d.type && x.category === d.category && x.date.slice(0, 7) === mk);
+        let scopeNote = this.mLabel(mk);
+        if (!list.length) { list = s.txns.filter(x => x.type === d.type && x.category === d.category); scopeNote = 'all months'; }
+        list = list.slice().sort((a, b) => b.amount - a.amount).slice(0, 7);
+        const ltot = list.reduce((n, t) => n + t.amount, 0) || 1;
+        const cards = list.map((t, i) => {
+          const share = t.amount / ltot;
+          const big = share >= 0.35, mid = !big && share >= 0.15;
+          return { label: t.notes || t.category, amount: this.fmt(t.amount), date: this.dLabel(t.date),
+            bg: TINT[i % TINT.length], gc: big ? 'span 2' : 'span 1', gr: big ? 'span 2' : mid ? 'span 2' : 'span 1',
+            size: big ? '20px' : mid ? '16px' : '14px' };
+        });
+        return {
+          cards, cardsEmpty: cards.length === 0, cardsNote: 'Transactions · ' + scopeNote,
+          modeOptions: [{ k: 'monthly', l: 'Monthly' }, { k: 'ytd', l: 'Year to date' }].map(o => ({
+            label: o.l,
+            bg: (s.detailMode || 'monthly') === o.k ? 'var(--color-accent-100)' : 'transparent',
+            fc: (s.detailMode || 'monthly') === o.k ? 'var(--color-accent-800)' : MUT,
+            select: () => this.setState({ detailMode: o.k })
+          })),
+          modeNote: dytd ? 'Running total through each month.' : 'Each month on its own.',
+          category: d.category, type: d.type === 'Expense' ? 'Expense' : d.type,
+          icon: this.iconFor(d.category), color: SER[d.type],
+          total: this.money(total), peak: this.fmt(dmax),
+          verb: d.type === 'Income' ? 'earned' : d.type === 'Savings' ? 'saved' : 'spent',
+          bars: shown.map(r => ({
+            label: this.SH[Number(r.key.slice(5, 7)) - 1],
+            h: Math.round(r.a / dmax * 100), bh: Math.round(r.b / dmax * 100),
+            value: r.a ? this.fmt(r.a) : '',
+            labelColor: r.key === mk ? 'var(--color-text)' : 'var(--color-neutral-700)',
+            op: r.key === mk ? '1' : '.72'
+          }))
+        };
+      })(),
+      closeDetail: () => this.setState({ detail: null }),
+      hasErr: !!s.err, formErr: s.err,
+      closeSheet: this.closeSheet, saveSheet: this.save, deleteEntry: this.del
+    };
+  }
+}
+
+</script>
+
+<!-- ============ dc-runtime: auto-loads React/ReactDOM and boots ============ -->
+<script>
+// GENERATED from dc-runtime/src/*.ts — do not edit. Rebuild with `cd dc-runtime && bun run build`.
+"use strict";
+(() => {
+  var __defProp = Object.defineProperty;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+  // src/react.ts
+  function getReact() {
+    const R = window.React;
+    if (!R) throw new Error("dc-runtime: window.React is not available yet");
+    return R;
+  }
+  function getReactDOM() {
+    const RD = window.ReactDOM;
+    if (!RD) throw new Error("dc-runtime: window.ReactDOM is not available yet");
+    return RD;
+  }
+  var h = ((...args) => getReact().createElement(
+    ...args
+  ));
+
+  // src/parse.ts
+  function parseDcDocument(doc) {
+    const dc = doc.querySelector("x-dc");
+    if (!dc) return null;
+    const scriptEl = doc.querySelector("script[data-dc-script]");
+    const { props, preview } = parseDataProps(
+      scriptEl?.getAttribute("data-props") ?? null
+    );
+    return {
+      template: dc.innerHTML,
+      js: scriptEl ? scriptEl.textContent || "" : "",
+      props,
+      preview
+    };
+  }
+  function parseDcText(src) {
+    const openMatch = /<x-dc(?:\s[^>]*)?>/.exec(src);
+    if (!openMatch) return null;
+    const close = src.lastIndexOf("</x-dc>");
+    if (close === -1 || close < openMatch.index) return null;
+    const template = src.slice(openMatch.index + openMatch[0].length, close);
+    const doc = new DOMParser().parseFromString(src, "text/html");
+    const scriptEl = doc.querySelector("script[data-dc-script]");
+    const { props, preview } = parseDataProps(
+      scriptEl?.getAttribute("data-props") ?? null
+    );
+    return {
+      template,
+      js: scriptEl ? scriptEl.textContent || "" : "",
+      props,
+      preview
+    };
+  }
+  function parseDataProps(raw) {
+    if (!raw) return { props: null, preview: null };
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return { props: null, preview: null };
+    }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return { props: null, preview: null };
+    }
+    const obj = parsed;
+    const preview = obj.$preview && typeof obj.$preview === "object" ? obj.$preview : null;
+    const rest = {};
+    for (const k of Object.keys(obj)) {
+      if (k[0] !== "$") rest[k] = obj[k];
+    }
+    return { props: Object.keys(rest).length ? rest : null, preview };
+  }
+  function dcNameFromPath(pathname) {
+    let p = pathname || "";
+    try {
+      p = decodeURIComponent(p);
+    } catch {
+    }
+    const base = p.split("/").pop() || "Root";
+    return base.replace(/\.dc\.html$/, "").replace(/\.html?$/, "") || "Root";
+  }
+
+  // src/boot.ts
+  var BASE_CSS = `
+    .sc-placeholder{background:color-mix(in srgb,currentColor 8%,transparent);
+      border:1px solid color-mix(in srgb,currentColor 50%,transparent);
+      border-radius:2px;box-sizing:border-box;overflow:hidden}
+    @keyframes sc-shine{0%{background-position:100% 50%}100%{background-position:0% 50%}}
+    html.sc-dc-streaming .sc-placeholder,
+    html.sc-dc-streaming .sc-interp.sc-missing{position:relative;
+      background:color-mix(in srgb,currentColor 5%,transparent);
+      border-color:transparent}
+    html.sc-dc-streaming .sc-placeholder::before,
+    html.sc-dc-streaming .sc-interp.sc-missing::before{content:'';
+      position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg,rgba(217,119,87,0) 25%,rgba(247,225,211,.95) 37%,rgba(217,119,87,0) 63%);
+      background-size:400% 100%;animation:sc-shine 1.4s ease infinite}
+    html.sc-dc-streaming .sc-placeholder:nth-child(n+9 of .sc-placeholder)::before,
+    html.sc-dc-streaming .sc-interp.sc-missing:nth-child(n+9 of .sc-interp.sc-missing)::before{animation:none;
+      background:color-mix(in srgb,currentColor 8%,transparent)}
+    .sc-placeholder-error{padding:4px 8px;font:11px/1.4 ui-monospace,monospace;
+      color:color-mix(in srgb,currentColor 70%,transparent);word-break:break-word}
+    .sc-interp.sc-missing{display:inline-block;width:2em;height:1em;overflow:hidden;
+      vertical-align:text-bottom;background:rgba(255,255,255,.3);border:1px solid rgba(0,0,0,.5);
+      border-radius:2px;box-sizing:border-box;color:transparent;
+      user-select:none}
+    .sc-interp.sc-unresolved{font-family:ui-monospace,monospace;font-size:.85em;
+      color:color-mix(in srgb,currentColor 50%,transparent);
+      background:color-mix(in srgb,currentColor 10%,transparent);border-radius:3px;
+      padding:0 3px}
+    .sc-host.sc-has-error{position:relative}
+    .sc-logic-error{position:absolute;top:8px;left:8px;z-index:2147483647;max-width:60ch;
+      padding:6px 10px;background:#b00020;color:#fff;font:12px/1.4 ui-monospace,monospace;
+      border-radius:4px;white-space:pre-wrap;pointer-events:none}
+    /* Mirrors PRINT_BASELINE_CSS in apps/web deck-stage-export.ts \u2014 keep both
+       in sync until dc-runtime regains a build step. */
+    @media print {
+      @page { margin: 0.5cm; }
+      figure, table { break-inside: avoid; }
+      #dc-root, #dc-root > .sc-host { height: auto; }
+      *, *::before, *::after {
+        print-color-adjust: exact; -webkit-print-color-adjust: exact;
+        backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+        animation-delay: -99s !important; animation-duration: .001s !important;
+        animation-iteration-count: 1 !important; animation-fill-mode: both !important;
+        animation-play-state: running !important; transition-duration: 0s !important;
+      }
+    }
+  `;
+  var FULL_PAGE_CSS = "html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}";
+  function rootNameForDocument(doc, loc) {
+    let bootPath = loc.pathname || "";
+    if (!/\.dc\.html?$/i.test(safeDecode(bootPath))) {
+      try {
+        bootPath = new URL(doc.baseURI || "/").pathname;
+      } catch {
+      }
+    }
+    return dcNameFromPath(bootPath);
+  }
+  function safeDecode(s) {
+    try {
+      return decodeURIComponent(s);
+    } catch {
+      return s;
+    }
+  }
+  function boot(runtime, doc = document) {
+    const parsed = parseDcDocument(doc);
+    if (!parsed) return null;
+    const React = getReact();
+    const rootName = rootNameForDocument(doc, location);
+    runtime.markFetched(rootName);
+    runtime.setRootName(rootName);
+    runtime.adoptParsed(rootName, parsed);
+    if (!window.__resources) {
+      fetch(location.href).then((res) => res.ok ? res.text() : "").then((t) => {
+        const raw = t ? parseDcText(t) : null;
+        if (raw?.template) runtime.updateHtml(rootName, raw.template);
+      }).catch(() => {
+      });
+    }
+    const dc = doc.querySelector("x-dc");
+    const hostEl = doc.createElement("div");
+    hostEl.id = "dc-root";
+    dc.replaceWith(hostEl);
+    if (!parsed.preview) {
+      const s = doc.createElement("style");
+      s.textContent = FULL_PAGE_CSS;
+      doc.head.appendChild(s);
+    }
+    const Root = runtime.getDC(rootName);
+    const entry = runtime.registry.get(rootName);
+    function StandaloneRoot() {
+      const [, setTick] = React.useState(0);
+      React.useEffect(() => {
+        const sub = () => setTick((n) => n + 1);
+        entry.subs.add(sub);
+        return () => {
+          entry.subs.delete(sub);
+        };
+      }, []);
+      const defaults = React.useMemo(() => {
+        const d = {};
+        for (const k in entry.propsMeta || {}) {
+          const v = entry.propsMeta?.[k]?.default;
+          if (v !== void 0) d[k] = v;
+        }
+        return d;
+      }, [entry.propsMeta]);
+      return h(Root, { ...defaults, ...entry.propOverrides || {} });
+    }
+    const ReactDOM = getReactDOM();
+    if (ReactDOM.createRoot)
+      ReactDOM.createRoot(hostEl).render(h(StandaloneRoot));
+    else ReactDOM.render(h(StandaloneRoot), hostEl);
+    return rootName;
+  }
+
+  // src/expr.ts
+  var IDENT_RE = /^[A-Za-z_$][A-Za-z0-9_$]*/;
+  var NUMBER_RE = /^-?\d+(\.\d+)?$/;
+  function resolve(vals, src) {
+    const expr = String(src).trim();
+    if (!expr) return void 0;
+    if (expr[0] === "(" && expr[expr.length - 1] === ")" && parensWrapWhole(expr)) {
+      return resolve(vals, expr.slice(1, -1));
+    }
+    const eq = findTopLevelEquality(expr);
+    if (eq) {
+      const lv = resolve(vals, expr.slice(0, eq.index));
+      const rv = resolve(vals, expr.slice(eq.index + eq.op.length));
+      switch (eq.op) {
+        case "===":
+          return lv === rv;
+        case "!==":
+          return lv !== rv;
+        case "==":
+          return lv == rv;
+        default:
+          return lv != rv;
+      }
+    }
+    if (expr[0] === "!") return !resolve(vals, expr.slice(1));
+    if (expr === "true") return true;
+    if (expr === "false") return false;
+    if (expr === "null") return null;
+    if (expr === "undefined") return void 0;
+    if (NUMBER_RE.test(expr)) return Number(expr);
+    if (expr.length >= 2 && (expr[0] === '"' || expr[0] === "'") && expr[expr.length - 1] === expr[0]) {
+      return expr.slice(1, -1);
+    }
+    return resolvePath(vals, expr);
+  }
+  function parensWrapWhole(expr) {
+    let depth = 0;
+    for (let i = 0; i < expr.length - 1; i++) {
+      if (expr[i] === "(") depth++;
+      else if (expr[i] === ")") {
+        depth--;
+        if (depth === 0) return false;
+      }
+    }
+    return true;
+  }
+  function findTopLevelEquality(expr) {
+    let depth = 0;
+    for (let i = 0; i < expr.length; i++) {
+      const c = expr[i];
+      if (c === "[" || c === "(") depth++;
+      else if (c === "]" || c === ")") depth--;
+      else if (depth === 0 && (c === "=" || c === "!") && expr[i + 1] === "=") {
+        if (i > 0 && (expr[i - 1] === "=" || expr[i - 1] === "!")) continue;
+        if (!expr.slice(0, i).trim()) continue;
+        const op = expr[i + 2] === "=" ? c + "==" : c + "=";
+        return { index: i, op };
+      }
+    }
+    return null;
+  }
+  function resolvePath(vals, expr) {
+    const head = expr.match(IDENT_RE);
+    if (!head) return void 0;
+    let cur = vals == null ? void 0 : vals[head[0]];
+    let i = head[0].length;
+    while (i < expr.length) {
+      if (expr[i] === ".") {
+        const m = expr.slice(i + 1).match(IDENT_RE) || expr.slice(i + 1).match(/^\d+/);
+        if (!m) return void 0;
+        cur = cur == null ? void 0 : cur[m[0]];
+        i += 1 + m[0].length;
+      } else if (expr[i] === "[") {
+        let depth = 1;
+        let j = i + 1;
+        while (j < expr.length && depth > 0) {
+          if (expr[j] === "[") depth++;
+          else if (expr[j] === "]") {
+            depth--;
+            if (depth === 0) break;
+          }
+          j++;
+        }
+        if (depth !== 0) return void 0;
+        const key = resolve(vals, expr.slice(i + 1, j));
+        cur = cur == null ? void 0 : cur[key];
+        i = j + 1;
+      } else {
+        return void 0;
+      }
+    }
+    return cur;
+  }
+
+  // src/encode.ts
+  var CAMEL_ATTR = "sc-camel-";
+  var INLINE_TEXT_TAGS = new Set(
+    "a abbr b bdi bdo br cite code del dfn em i ins kbd mark q s samp small span strike strong sub sup u var wbr".split(
+      " "
+    )
+  );
+  var RAW_WRAP = {
+    select: "sc-raw-select",
+    table: "sc-raw-table",
+    tbody: "sc-raw-tbody",
+    thead: "sc-raw-thead",
+    tfoot: "sc-raw-tfoot",
+    tr: "sc-raw-tr",
+    td: "sc-raw-td",
+    th: "sc-raw-th",
+    caption: "sc-raw-caption"
+  };
+  var RAW_UNWRAP = Object.fromEntries(
+    Object.entries(RAW_WRAP).map(([k, v]) => [v, k])
+  );
+  var EVENT_MAP = {
+    onclick: "onClick",
+    onchange: "onChange",
+    oninput: "onInput",
+    onsubmit: "onSubmit",
+    onkeydown: "onKeyDown",
+    onkeyup: "onKeyUp",
+    onkeypress: "onKeyPress",
+    onmousedown: "onMouseDown",
+    onmouseup: "onMouseUp",
+    onmouseenter: "onMouseEnter",
+    onmouseleave: "onMouseLeave",
+    onfocus: "onFocus",
+    onblur: "onBlur",
+    ondoubleclick: "onDoubleClick",
+    oncontextmenu: "onContextMenu",
+    onmousemove: "onMouseMove",
+    onmouseover: "onMouseOver",
+    onmouseout: "onMouseOut",
+    onpointerdown: "onPointerDown",
+    onpointerup: "onPointerUp",
+    onpointermove: "onPointerMove",
+    onpointerenter: "onPointerEnter",
+    onpointerleave: "onPointerLeave",
+    onpointercancel: "onPointerCancel",
+    onpointerover: "onPointerOver",
+    onpointerout: "onPointerOut",
+    ongotpointercapture: "onGotPointerCapture",
+    onlostpointercapture: "onLostPointerCapture",
+    ontouchstart: "onTouchStart",
+    ontouchend: "onTouchEnd",
+    ontouchmove: "onTouchMove",
+    ontouchcancel: "onTouchCancel",
+    ondragstart: "onDragStart",
+    ondragend: "onDragEnd",
+    ondragenter: "onDragEnter",
+    ondragleave: "onDragLeave",
+    ondragover: "onDragOver",
+    onanimationstart: "onAnimationStart",
+    onanimationend: "onAnimationEnd",
+    onanimationiteration: "onAnimationIteration",
+    ontransitionend: "onTransitionEnd"
+  };
+  var ATTRS = `(?:[^>"']|"[^"]*"|'[^']*')*`;
+  var IMPORT_SELF_CLOSE_RE = new RegExp(
+    "<(x-import|dc-import)(" + ATTRS + ")/>",
+    "gi"
+  );
+  var CAMEL_ATTR_RE = /(\s)([a-z]+[A-Z][A-Za-z0-9]*)(\s*=)/g;
+  function encodeCamelAttrs(html) {
+    return html.replace(
+      CAMEL_ATTR_RE,
+      (_, sp, name, eq) => sp + CAMEL_ATTR + name.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase()) + eq
+    );
+  }
+  function encodeCase(html) {
+    html = html.replace(
+      IMPORT_SELF_CLOSE_RE,
+      (_, t, a) => "<" + t + a + "></" + t + ">"
+    );
+    html = html.replace(/<helmet(\s|>)/gi, "<sc-helmet$1");
+    html = html.replace(/<\/helmet\s*>/gi, "</sc-helmet>");
+    html = encodeCamelAttrs(html);
+    for (const [real, alias] of Object.entries(RAW_WRAP)) {
+      html = html.replace(
+        new RegExp("(</?)" + real + "(?=[\\s>])", "gi"),
+        "$1" + alias
+      );
+    }
+    return html;
+  }
+  function kebabToCamel(s) {
+    return s.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  }
+  function cssToObj(css) {
+    const o = {};
+    for (const decl of css.split(";")) {
+      const i = decl.indexOf(":");
+      if (i < 0) continue;
+      const prop = decl.slice(0, i).trim();
+      o[prop.startsWith("--") ? prop : kebabToCamel(prop)] = decl.slice(i + 1).trim();
+    }
+    return o;
+  }
+  function compileAttr(raw) {
+    const whole = raw.match(/^\s*\{\{([\s\S]+?)\}\}\s*$/);
+    if (whole) {
+      const path = whole[1];
+      return (vals) => resolve(vals, path);
+    }
+    if (raw.includes("{{")) {
+      const parts = raw.split(/\{\{([\s\S]+?)\}\}/g);
+      return (vals) => parts.map((s, i) => i & 1 ? resolve(vals, s) ?? "" : s).join("");
+    }
+    return () => raw;
+  }
+
+  // src/compile.ts
+  function collectProps(node, kind, host) {
+    const propGetters = [];
+    const pseudoClasses = [];
+    let hintSize = null;
+    for (const { name, value } of [...node.attributes]) {
+      if (name === "sc-name" || name === "data-dc-tpl") continue;
+      let key = name;
+      if (key.startsWith(CAMEL_ATTR))
+        key = kebabToCamel(key.slice(CAMEL_ATTR.length));
+      if (key === "hint-size") {
+        hintSize = value;
+        continue;
+      }
+      if (key.startsWith("style-")) {
+        pseudoClasses.push(host.pseudoClass(key.slice(6), value));
+        continue;
+      }
+      if (kind !== "dom") {
+        if (key.includes("-") && !(kind === "x-import" && (key.startsWith("aria-") || key.startsWith("data-"))))
+          key = kebabToCamel(key);
+      } else {
+        if (key === "class") key = "className";
+        else if (key === "for") key = "htmlFor";
+        else if (key.startsWith("on"))
+          key = EVENT_MAP[key] || "on" + key[2].toUpperCase() + key.slice(3);
+      }
+      propGetters.push([key, compileAttr(value)]);
+    }
+    return { propGetters, pseudoClasses, hintSize };
+  }
+  var HOST_STYLE_PROPS = /* @__PURE__ */ new Set([
+    "position",
+    "left",
+    "right",
+    "top",
+    "bottom",
+    "inset",
+    "width",
+    "height",
+    "z-index",
+    "transform"
+  ]);
+  function hostPositionStyle(style) {
+    const all = typeof style === "string" ? cssToObj(style) : style != null && typeof style === "object" ? style : null;
+    if (!all) return void 0;
+    const out = {};
+    for (const [k, v] of Object.entries(all)) {
+      const kebab = k.replace(/[A-Z]/g, (c) => "-" + c.toLowerCase());
+      if (HOST_STYLE_PROPS.has(kebab)) out[k] = v;
+    }
+    return Object.keys(out).length ? out : void 0;
+  }
+  function compileTemplate(html, host) {
+    const tpl = document.createElement("template");
+    //! nosemgrep: direct-inner-html-assignment
+    tpl.innerHTML = encodeCase(html);
+    let tplN = 0;
+    (function stamp(node) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        node.setAttribute("data-dc-tpl", String(tplN++));
+      }
+      for (const c of node.childNodes) stamp(c);
+    })(tpl.content);
+    const builders = walkChildren(tpl.content, host);
+    const render = ((vals, ctx) => builders.map((b, i) => b(vals || {}, ctx, i)));
+    render.__annotated = tpl.innerHTML;
+    return render;
+  }
+  function walkChildren(node, host) {
+    return [...node.childNodes].map((c) => walk(c, host)).filter((b) => b != null);
+  }
+  var SLIDE_ID_VALUE_RE = /^[0-9a-f]{8}$/;
+  var DECK_CONTROL_FLOW_RE = /^(sc-if|sc-for|sc-else|dc-import|x-import)$/;
+  var DECK_AUX_RE = /^(template|script|style|sc-helmet|helmet)$/;
+  function isDeckMountTag(el) {
+    if (el.localName === "deck-stage") return true;
+    return el.localName === "x-import" && (el.getAttribute("component-from-global-scope") || "") === "deck-stage";
+  }
+  function walkDeckChildren(el, host) {
+    const pairs = [...el.childNodes].map((c) => ({ c, b: walk(c, host) })).filter((p) => p.b !== null);
+    const kids = pairs.map((p) => p.b);
+    const seen = /* @__PURE__ */ new Set();
+    const wsSeen = /* @__PURE__ */ new Map();
+    const keys = [];
+    const nextSlideId = new Array(pairs.length);
+    {
+      let upcoming = null;
+      for (let j = pairs.length - 1; j >= 0; j--) {
+        const n = pairs[j].c;
+        if (n.nodeType === Node.ELEMENT_NODE) {
+          const t = n.localName;
+          upcoming = !DECK_AUX_RE.test(t) && !DECK_CONTROL_FLOW_RE.test(t) ? n.getAttribute("data-om-slide-id") : null;
+        }
+        nextSlideId[j] = upcoming;
+      }
+    }
+    for (let j = 0; j < pairs.length; j++) {
+      const { c } = pairs[j];
+      if (c.nodeType === Node.TEXT_NODE) {
+        if ((c.nodeValue ?? "").trim() === "") {
+          const base = nextSlideId[j] ? "omid-ws:" + nextSlideId[j] : "omid-ws:aux";
+          const n = wsSeen.get(base) ?? 0;
+          wsSeen.set(base, n + 1);
+          keys.push(n === 0 ? base : base + ":" + n);
+          continue;
+        }
+        return { kids, keys: null };
+      }
+      if (c.nodeType !== Node.ELEMENT_NODE) {
+        keys.push(j);
+        continue;
+      }
+      const child = c;
+      const tag = child.localName;
+      if (DECK_AUX_RE.test(tag)) {
+        keys.push(j);
+        continue;
+      }
+      if (DECK_CONTROL_FLOW_RE.test(tag)) return { kids, keys: null };
+      const v = child.getAttribute("data-om-slide-id");
+      if (!v || !SLIDE_ID_VALUE_RE.test(v) || seen.has(v)) {
+        return { kids, keys: null };
+      }
+      seen.add(v);
+      keys.push("omid:" + v);
+    }
+    return { kids, keys };
+  }
+  function renderDeckKids(kids, kidKeys, vals, ctx) {
+    return kids.map((b, j) => {
+      const k = kidKeys ? kidKeys[j] : j;
+      const out = b(vals, ctx, k);
+      return kidKeys != null && typeof out === "string" ? h(getReact().Fragment, { key: k }, out) : out;
+    });
+  }
+  function walk(node, host) {
+    if (node.nodeType === Node.TEXT_NODE) return walkText(node);
+    if (node.nodeType !== Node.ELEMENT_NODE) return null;
+    const el = node;
+    const tag = el.tagName.toLowerCase();
+    if (tag === "sc-for") return walkFor(el, host);
+    if (tag === "sc-if") return walkIf(el, host);
+    if (tag === "x-import") return walkXImport(el, host);
+    if (tag === "sc-helmet") return host.helmet(el);
+    if (tag === "dc-import") return walkComponent(el, host);
+    return walkElement(el, host);
+  }
+  var warnedHoles = /* @__PURE__ */ new Set();
+  function warnUnresolved(ctx, what) {
+    const key = (ctx?.__name || "?") + "\0" + what;
+    if (warnedHoles.has(key)) return;
+    warnedHoles.add(key);
+    console.warn("[dc-runtime] " + (ctx?.__name || "template") + ": " + what);
+  }
+  function walkText(node) {
+    const txt = node.nodeValue ?? "";
+    if (!txt.includes("{{")) {
+      if (!txt.trim() && !txt.includes(" ")) return null;
+      return () => txt;
+    }
+    const parts = txt.split(/\{\{([\s\S]+?)\}\}/g);
+    return (vals, ctx, key) => h(
+      getReact().Fragment,
+      { key },
+      ...parts.map((p, i) => {
+        if (!(i & 1)) return p;
+        const v = resolve(vals, p);
+        if (v === void 0) {
+          if (!ctx?.__streamingNow) {
+            if (document.body?.hasAttribute("data-dc-editor-on")) {
+              return h(
+                "span",
+                { key: i, className: "sc-interp sc-unresolved" },
+                "{{ " + p.trim() + " }}"
+              );
+            }
+            warnUnresolved(
+              ctx,
+              "{{ " + p.trim() + " }} never resolved \u2014 rendered as empty"
+            );
+            return null;
+          }
+          return h(
+            "span",
+            { key: i, className: "sc-interp sc-missing" },
+            p.trim()
+          );
+        }
+        if (getReact().isValidElement(v) || Array.isArray(v)) {
+          return h(getReact().Fragment, { key: i }, v);
+        }
+        if (v === null || typeof v === "boolean") return null;
+        return h("span", { key: i, className: "sc-interp" }, String(v));
+      })
+    );
+  }
+  function walkFor(el, host) {
+    const listGet = compileAttr(el.getAttribute("list") || "");
+    const asName = el.getAttribute("as") || "item";
+    const hintN = parseInt(el.getAttribute("hint-placeholder-count") || "0", 10);
+    const kids = walkChildren(el, host);
+    const listSrc = el.getAttribute("list") || "";
+    return (vals, ctx, key) => {
+      let list = listGet(vals);
+      if (!Array.isArray(list)) {
+        if (!ctx?.__streamingNow) {
+          if (list !== void 0 && list !== null) {
+            warnUnresolved(
+              ctx,
+              'sc-for list="' + listSrc + '" is not an array (' + typeof list + ")"
+            );
+          }
+          list = [];
+        } else {
+          list = hintN > 0 ? Array(hintN).fill(void 0) : [];
+        }
+      }
+      return h(
+        getReact().Fragment,
+        { key },
+        list.map((item, i) => {
+          const sub = { ...vals, [asName]: item, $index: i };
+          return h(
+            getReact().Fragment,
+            { key: i },
+            kids.map((b, j) => b(sub, ctx, j))
+          );
+        })
+      );
+    };
+  }
+  function walkIf(el, host) {
+    const valGet = compileAttr(el.getAttribute("value") || "");
+    const hintRaw = el.getAttribute("hint-placeholder-val");
+    const hintGet = hintRaw != null ? compileAttr(hintRaw) : null;
+    const kids = walkChildren(el, host);
+    return (vals, ctx, key) => {
+      let v = valGet(vals);
+      if (v === void 0 && hintGet && ctx?.__streamingNow) v = hintGet(vals);
+      return v ? h(
+        getReact().Fragment,
+        { key },
+        kids.map((b, j) => b(vals, ctx, j))
+      ) : null;
+    };
+  }
+  function walkComponent(el, host) {
+    const name = el.getAttribute("name") || el.getAttribute("component") || "";
+    el.removeAttribute("name");
+    el.removeAttribute("component");
+    const tplId = el.getAttribute("data-dc-tpl");
+    const styleRaw = el.getAttribute("style");
+    el.removeAttribute("style");
+    const styleGet = styleRaw != null ? compileAttr(styleRaw) : null;
+    const { propGetters, hintSize } = collectProps(el, "dc-import", host);
+    const kids = walkChildren(el, host);
+    return (vals, ctx, key) => {
+      const props = {
+        key,
+        __hintSize: hintSize,
+        __tplId: tplId,
+        __hostStyle: styleGet ? hostPositionStyle(styleGet(vals)) : void 0
+      };
+      for (const [k, g] of propGetters) {
+        const v = g(vals);
+        if (k === "dcProps") {
+          if (v && typeof v === "object") Object.assign(props, v);
+          continue;
+        }
+        props[k] = v;
+      }
+      if (kids.length) props.children = kids.map((b, j) => b(vals, ctx, j));
+      return h(host.component(name), props);
+    };
+  }
+  function walkXImport(el, host) {
+    const globalNameGet = compileAttr(
+      el.getAttribute("component-from-global-scope") || ""
+    );
+    const exportNameGet = compileAttr(
+      el.getAttribute("component") || el.getAttribute("name") || ""
+    );
+    const fromRaw = el.getAttribute("from") || (el.getAttribute("component-from-global-scope") ? "" : el.getAttribute("src") || el.getAttribute("import") || "");
+    const urls = fromRaw.trim() ? fromRaw.trim().split(/\s+/) : [];
+    const url = urls.length ? urls[urls.length - 1] : "";
+    const kindOf = (u) => /\.(jsx|tsx)(\?|#|$)/i.test(u) ? "jsx" : "js";
+    const tplId = el.getAttribute("data-dc-tpl");
+    const styleRaw = el.getAttribute("style");
+    el.removeAttribute("style");
+    const styleGet = styleRaw != null ? compileAttr(styleRaw) : null;
+    const wrap = tplId != null || styleGet != null;
+    const { propGetters, hintSize } = collectProps(el, "x-import", host);
+    const hasContent = el.children.length > 0 || !!(el.textContent || "").trim();
+    const deckKeyed = hasContent && isDeckMountTag(el) ? walkDeckChildren(el, host) : null;
+    const kids = deckKeyed ? deckKeyed.kids : hasContent ? walkChildren(el, host) : [];
+    const kidKeys = deckKeyed?.keys ?? null;
+    const urlBindable = fromRaw.includes("{{");
+    if (urls.length && !urlBindable) {
+      let prev;
+      for (const u of urls) prev = host.loadExternal(kindOf(u), u, prev);
+    }
+    const evalName = (g, vals) => {
+      const v = g(vals);
+      const s = v == null ? "" : String(v);
+      return s.includes("{{") ? "" : s;
+    };
+    return (vals, ctx, key) => {
+      const globalName = evalName(globalNameGet, vals);
+      const name = globalName || evalName(exportNameGet, vals);
+      const C = !name || urlBindable ? null : globalName ? host.resolveExternalGlobal(url, globalName) : host.resolveExternal(url, name);
+      const hostStyle = styleGet ? hostPositionStyle(styleGet(vals)) : void 0;
+      const wrapper = wrap ? {
+        key,
+        className: "sc-host-x",
+        "data-dc-tpl": tplId,
+        style: hostStyle || { display: "contents" }
+      } : null;
+      if (!C) {
+        const error = urlBindable ? "x-import `from` cannot contain {{ \u2026 }} \u2014 module URLs are resolved at parse time; use a literal URL" : host.resolveExternalError(url, name);
+        const ph = host.placeholder({
+          key: wrapper ? void 0 : key,
+          name,
+          hintSize,
+          error
+        });
+        return wrapper ? h("div", wrapper, ph) : ph;
+      }
+      const props = wrapper ? {} : { key };
+      let unresolvedHole = false;
+      for (const [k, g] of propGetters) {
+        if (k === "component" || k === "componentFromGlobalScope" || k === "from") {
+          continue;
+        }
+        const v = g(vals);
+        if (v === void 0) unresolvedHole = true;
+        if (k === "dcProps") {
+          if (v && typeof v === "object") Object.assign(props, v);
+          continue;
+        }
+        props[k] = v;
+      }
+      if (unresolvedHole && ctx?.__htmlStreamingNow) {
+        const ph = host.placeholder({
+          key: wrapper ? void 0 : key,
+          name,
+          hintSize,
+          error: null
+        });
+        return wrapper ? h("div", wrapper, ph) : ph;
+      }
+      if (kids.length) {
+        props.children = renderDeckKids(kids, kidKeys, vals, ctx);
+      }
+      return wrapper ? h("div", wrapper, h(C, props)) : h(C, props);
+    };
+  }
+  function contentKey(el) {
+    const clone = el.cloneNode(true);
+    for (const d of clone.querySelectorAll("*")) {
+      while (d.attributes.length) d.removeAttribute(d.attributes[0].name);
+    }
+    const s = clone.innerHTML;
+    let h2 = 5381;
+    for (let i = 0; i < s.length; i++) h2 = (h2 << 5) + h2 + s.charCodeAt(i) | 0;
+    return s.length + "." + (h2 >>> 0).toString(36);
+  }
+  var NEVER_CONTENT_KEYED = new Set(
+    "script style textarea option title select canvas iframe video audio".split(
+      " "
+    )
+  );
+  var NOT_INLINE_SELECTOR = ":not(" + [...INLINE_TEXT_TAGS].join(",") + ")";
+  function walkElement(el, host) {
+    const realTag = RAW_UNWRAP[el.localName] || el.localName;
+    const tplId = el.getAttribute("data-dc-tpl");
+    const inlineOnly = el.childNodes.length > 0 && !NEVER_CONTENT_KEYED.has(realTag) && el.querySelector(NOT_INLINE_SELECTOR) === null;
+    const keySuffix = inlineOnly ? "|" + contentKey(el) : "";
+    const { propGetters, pseudoClasses } = collectProps(el, "dom", host);
+    const deckKeyed = isDeckMountTag(el) ? walkDeckChildren(el, host) : null;
+    const kids = deckKeyed ? deckKeyed.kids : walkChildren(el, host);
+    const kidKeys = deckKeyed?.keys ?? null;
+    return (vals, ctx, key) => {
+      const props = {
+        key: key + keySuffix,
+        "data-dc-tpl": tplId
+      };
+      for (const [k, g] of propGetters) {
+        let v = g(vals);
+        if (k === "style" && typeof v === "string") v = cssToObj(v);
+        if ((k === "value" || k === "checked") && v === void 0) {
+          v = k === "checked" ? false : "";
+        }
+        props[k] = v;
+      }
+      if (pseudoClasses.length) {
+        props.className = [props.className, ...pseudoClasses].filter(Boolean).join(" ");
+      }
+      return h(realTag, props, ...renderDeckKids(kids, kidKeys, vals, ctx));
+    };
+  }
+
+  // src/logic.ts
+  var StreamableLogic = class {
+    constructor(props) {
+      __publicField(this, "props");
+      __publicField(this, "state", {});
+      /** Back-pointer to the wrapper component, installed after construction. */
+      __publicField(this, "__host");
+      this.props = props || {};
+    }
+    setState(update, cb) {
+      this.__host && this.__host.__setLogicState(update, cb);
+    }
+    forceUpdate() {
+      this.__host && this.__host.forceUpdate();
+    }
+    componentDidMount() {
+    }
+    componentDidUpdate(_prevProps) {
+    }
+    componentWillUnmount() {
+    }
+    /** The flat object the template renders against (merged over props). */
+    renderVals() {
+      return {};
+    }
+  };
+  function evalDcLogic(src) {
+    //! nosemgrep: eval-and-function-constructor
+    const fn = new Function(
+      "DCLogic",
+      "StreamableLogic",
+      "React",
+      src + '\n;return (typeof Component!=="undefined"&&Component)||undefined;'
+    );
+    return fn(StreamableLogic, StreamableLogic, getReact());
+  }
+
+  // src/component.ts
+  function shallowEqual(a, b) {
+    if (!b) return false;
+    const ak = Object.keys(a).filter((k) => k !== "children");
+    const bk = Object.keys(b).filter((k) => k !== "children");
+    if (ak.length !== bk.length) return false;
+    for (const k of ak) if (a[k] !== b[k]) return false;
+    return true;
+  }
+  function Placeholder({
+    name,
+    hintSize,
+    streaming,
+    error
+  }) {
+    const [w, hgt] = (hintSize || "100%,60px").split(",");
+    return h(
+      "div",
+      {
+        className: "sc-placeholder" + (streaming ? " sc-streaming" : ""),
+        style: { width: w.trim(), height: hgt && hgt.trim() },
+        title: name
+      },
+      error ? h(
+        "div",
+        { className: "sc-placeholder-error" },
+        (name ? name + ": " : "") + error
+      ) : null
+    );
+  }
+  function hintToMin(hint) {
+    if (!hint) return void 0;
+    const [w, hgt] = hint.split(",");
+    return { minWidth: w.trim(), minHeight: hgt && hgt.trim() };
+  }
+  function createComponentFactory(registry, ensureFetched) {
+    const React = getReact();
+    const AncestorContext = React.createContext([]);
+    class StreamableComponent extends React.Component {
+      constructor(props) {
+        super(props);
+        __publicField(this, "__name");
+        __publicField(this, "__sub");
+        __publicField(this, "__needsDidMount", false);
+        /** Snapshot of the registry's streaming flags taken at render time —
+         *  builders read it off the RenderCtx (this) to pick placeholder vs
+         *  render-nothing for unresolved values. */
+        __publicField(this, "__streamingNow", false);
+        __publicField(this, "__htmlStreamingNow", false);
+        /** When a construct throws, remember the (class, registry.ver, props)
+         *  triple so render-time reconcile doesn't re-attempt it on every parent
+         *  re-render. A registry bump (new class, template, external module
+         *  resolving via bumpAll) changes `ver` and breaks the memo so an
+         *  env-dependent constructor can self-heal. */
+        __publicField(this, "__failedLogic", null);
+        __publicField(this, "__failedUserProps", null);
+        __publicField(this, "__failedVer", -1);
+        /** Per-instance constructor error — kept here (not on the registry entry)
+         *  so one instance's successful construct can't hide a sibling's failure,
+         *  and a construct can never wipe an eval error `updateJs` recorded on
+         *  `r.logicError`. */
+        __publicField(this, "__ctorError", null);
+        __publicField(this, "logic");
+        this.__name = props.__name;
+        this.state = { __v: 0, __err: null };
+        this.__sub = () => {
+          if (this.state.__err) this.setState({ __err: null });
+          this.forceUpdate();
+        };
+        this.__makeLogic(registry.get(this.__name).Logic, null);
+        ensureFetched(this.__name);
+      }
+      /** Error-boundary hook: a render crash anywhere in this DC's subtree
+       *  (its own template, an x-import'd component, a child DC without its
+       *  own deeper boundary) lands here instead of unmounting the page. */
+      static getDerivedStateFromError(e) {
+        return { __err: e instanceof Error && e.message ? e.message : String(e) };
+      }
+      componentDidCatch(e, info) {
+        console.error(
+          "[dc-runtime] render error in <" + this.__name + ">:",
+          e,
+          info?.componentStack || ""
+        );
+      }
+      /** Instantiate the logic class (or the no-op base) and adopt `prevState`
+       *  over its initial state — used both at mount and on hot-swap. */
+      __makeLogic(Logic, prevState) {
+        const L = Logic || StreamableLogic;
+        try {
+          this.logic = new L(this.__userProps());
+          this.__failedLogic = null;
+          this.__failedUserProps = null;
+          this.__ctorError = null;
+        } catch (e) {
+          console.error(e);
+          this.__failedLogic = Logic;
+          this.__failedUserProps = this.__userProps();
+          this.__failedVer = registry.get(this.__name).ver;
+          this.__ctorError = this.__name + ": " + (e instanceof Error && e.message ? e.message : String(e));
+          this.logic = new StreamableLogic(
+            this.__userProps()
+          );
+        }
+        this.logic.__host = this;
+        if (prevState)
+          this.logic.state = { ...this.logic.state || {}, ...prevState };
+      }
+      /** The props the author's logic + template see — internal __-prefixed
+       *  wiring stripped. */
+      __userProps() {
+        const { __name, __hintSize, __tplId, __hostStyle, ...rest } = this.props;
+        return rest;
+      }
+      __setLogicState(update, cb) {
+        const prev = this.logic.state;
+        const patch = typeof update === "function" ? update(prev) : update;
+        this.logic.state = { ...prev, ...patch };
+        this.setState((s) => ({ __v: s.__v + 1 }), cb);
+      }
+      /** Swap the logic instance when the registry's Logic class changed
+       *  (streaming completion, hot reload). State carries over; didMount
+       *  re-fires after the swap commits so refs exist. */
+      __reconcileLogic() {
+        const r = registry.get(this.__name);
+        const Next = r.Logic;
+        const Cur = this.logic.constructor;
+        if (Next === Cur || !Next && Cur === StreamableLogic || Next === this.__failedLogic && r.ver === this.__failedVer && shallowEqual(this.__userProps(), this.__failedUserProps)) {
+          return;
+        }
+        if (!this.__needsDidMount) {
+          try {
+            this.logic.componentWillUnmount();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+        this.__makeLogic(Next, this.logic.state);
+        this.__needsDidMount = true;
+      }
+      componentDidMount() {
+        registry.get(this.__name).subs.add(this.__sub);
+        try {
+          this.logic.componentDidMount();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      componentDidUpdate(prevProps) {
+        this.logic.props = this.__userProps();
+        if (this.__needsDidMount) {
+          if (this.state.__err || !registry.get(this.__name).tpl) return;
+          this.__needsDidMount = false;
+          try {
+            this.logic.componentDidMount();
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          try {
+            this.logic.componentDidUpdate(prevProps);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+      componentWillUnmount() {
+        registry.get(this.__name).subs.delete(this.__sub);
+        if (!this.__needsDidMount) {
+          try {
+            this.logic.componentWillUnmount();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+      render() {
+        const r = registry.get(this.__name);
+        const cls = "sc-host" + (r.htmlStreaming ? " sc-streaming-html" : "") + (r.jsStreaming ? " sc-streaming-js" : "");
+        const hintStyle = r.htmlStreaming ? hintToMin(this.props.__hintSize) : void 0;
+        const hostStyle = this.props.__hostStyle || hintStyle ? { ...hintStyle || {}, ...this.props.__hostStyle || {} } : void 0;
+        const hostBase = {
+          className: cls,
+          style: hostStyle,
+          "data-sc-name": this.__name,
+          "data-dc-tpl": this.props.__tplId
+        };
+        const chain = Array.isArray(this.context) ? this.context : [];
+        if (chain.includes(this.__name)) {
+          const cycle = [
+            ...chain.slice(chain.indexOf(this.__name)),
+            this.__name
+          ].join(" \u2192 ");
+          return h(
+            "div",
+            { ...hostBase, className: cls + " sc-has-error" },
+            h(Placeholder, {
+              name: this.__name,
+              hintSize: this.props.__hintSize,
+              error: "circular import: " + cycle
+            })
+          );
+        }
+        if (this.state.__err) {
+          return h(
+            "div",
+            { ...hostBase, className: cls + " sc-has-error" },
+            h(
+              "div",
+              { className: "sc-logic-error", "data-omelette-chrome": "" },
+              this.__name + ": " + this.state.__err
+            ),
+            h(Placeholder, {
+              name: this.__name,
+              hintSize: this.props.__hintSize,
+              error: this.state.__err
+            })
+          );
+        }
+        this.__reconcileLogic();
+        if (!r.tpl) {
+          return h(
+            "div",
+            hostBase,
+            h(Placeholder, { name: this.__name, hintSize: this.props.__hintSize })
+          );
+        }
+        const userProps = this.__userProps();
+        this.logic.props = userProps;
+        let vals = userProps;
+        let renderErr = r.logicError || this.__ctorError;
+        try {
+          vals = { ...userProps, ...this.logic.renderVals() || {} };
+        } catch (e) {
+          console.error(e);
+          renderErr = this.__name + ".renderVals(): " + (e instanceof Error && e.message ? e.message : String(e));
+        }
+        this.__streamingNow = !!(r.htmlStreaming || r.jsStreaming);
+        this.__htmlStreamingNow = !!r.htmlStreaming;
+        return h(
+          "div",
+          { ...hostBase, className: cls + (renderErr ? " sc-has-error" : "") },
+          renderErr && h(
+            "div",
+            { className: "sc-logic-error", "data-omelette-chrome": "" },
+            renderErr
+          ),
+          h(
+            AncestorContext.Provider,
+            { value: [...chain, this.__name] },
+            r.tpl(vals, this)
+          )
+        );
+      }
+    }
+    __publicField(StreamableComponent, "contextType", AncestorContext);
+    const named = /* @__PURE__ */ new Map();
+    function getDC(name) {
+      const hit = named.get(name);
+      if (hit) return hit;
+      function Dispatcher(p) {
+        const [, setTick] = React.useState(0);
+        React.useEffect(() => {
+          const sub = () => setTick((n) => n + 1);
+          registry.get(name).subs.add(sub);
+          return () => {
+            registry.get(name).subs.delete(sub);
+          };
+        }, []);
+        ensureFetched(name);
+        return h(StreamableComponent, { ...p, __name: name });
+      }
+      Dispatcher.displayName = name;
+      named.set(name, Dispatcher);
+      return Dispatcher;
+    }
+    return {
+      getDC,
+      StreamableComponent
+    };
+  }
+
+  // src/bundled.ts
+  function bundledBlob(url) {
+    const blobs = window.__resourceBlobs;
+    const b = blobs ? blobs[url.split("#")[0]] : void 0;
+    return b instanceof Blob ? b : null;
+  }
+
+  // src/cdn.ts
+  var REACT_URL = "https://unpkg.com/react@18.3.1/umd/react.production.min.js";
+  var REACT_SRI = "sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z";
+  var REACT_DOM_URL = "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js";
+  var REACT_DOM_SRI = "sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1";
+  var BABEL_URL = "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js";
+  var BABEL_SRI = "sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y";
+  function cdnScriptFor(url, sri) {
+    const res = window.__resources;
+    const v = res ? res[url] : void 0;
+    return typeof v === "string" && v ? { src: v } : { src: url, integrity: sri };
+  }
+
+  // src/external.ts
+  var isCustomElementName = (n) => !n.includes(".") && n.includes("-");
+  function isRenderableType(g) {
+    if (typeof g === "function") return !isElementClass(g);
+    return typeof g === "object" && g !== null && typeof g.$$typeof === "symbol";
+  }
+  function resolveDottedPath(root, name) {
+    let cur = root;
+    for (const seg of name.split(".")) {
+      if (cur == null) return void 0;
+      cur = cur[seg];
+    }
+    return cur;
+  }
+  var GLOBAL_POLL_INTERVAL_MS = 50;
+  var GLOBAL_POLL_TIMEOUT_MS = 3e4;
+  function createExternalModules(onResolved) {
+    const cache = /* @__PURE__ */ new Map();
+    let babelLoading = null;
+    const reportedMissing = /* @__PURE__ */ new Map();
+    const polling = /* @__PURE__ */ new Set();
+    function ensureBabel() {
+      if (window.Babel) return Promise.resolve();
+      if (babelLoading) return babelLoading;
+      const babel = cdnScriptFor(BABEL_URL, BABEL_SRI);
+      babelLoading = new Promise((res, rej) => {
+        const s = document.createElement("script");
+        s.src = babel.src;
+        if (babel.integrity) {
+          s.integrity = babel.integrity;
+          s.crossOrigin = "anonymous";
+        }
+        s.onload = () => res();
+        s.onerror = rej;
+        document.head.appendChild(s);
+      });
+      return babelLoading;
+    }
+    const pending = /* @__PURE__ */ new Map();
+    function load(kind, url, after) {
+      const existing = pending.get(url);
+      if (existing) return existing;
+      cache.set(url, null);
+      console.info("[dc-runtime] x-import: loading", url, "(" + kind + ")");
+      const ready = Promise.all([
+        kind === "jsx" ? ensureBabel() : Promise.resolve(),
+        after ?? Promise.resolve()
+      ]);
+      const p = ready.then(() => {
+        const pre = bundledBlob(url);
+        if (pre) return pre.text();
+        return fetch(url).then((r) => {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.text();
+        });
+      }).then((src) => {
+        const code = kind === "jsx" ? window.Babel.transform(src, {
+          filename: url,
+          presets: ["react", "typescript"]
+        }).code : src;
+        const module = { exports: {} };
+        const before = new Set(Object.keys(window));
+        //! nosemgrep: eval-and-function-constructor
+        new Function("React", "module", "exports", "require", code)(
+          getReact(),
+          module,
+          module.exports,
+          () => ({})
+        );
+        const globals = {};
+        for (const k of Object.keys(window)) {
+          if (!before.has(k) && typeof window[k] === "function") {
+            globals[k] = window[k];
+          }
+        }
+        cache.set(url, { mod: module.exports, globals });
+        console.info(
+          "[dc-runtime] x-import: loaded",
+          url,
+          "\u2014 exports:",
+          Object.keys(module.exports),
+          "window globals:",
+          Object.keys(globals)
+        );
+        onResolved();
+      }).catch((e) => {
+        cache.set(url, {
+          mod: {},
+          globals: {},
+          error: "failed to load: " + (e instanceof Error && e.message ? e.message : String(e))
+        });
+        console.error(
+          "[dc-runtime] x-import: FAILED to load",
+          url,
+          "(" + kind + ")",
+          e
+        );
+        onResolved();
+      });
+      pending.set(url, p);
+      return p;
+    }
+    function resolve2(url, name) {
+      const entry = cache.get(url);
+      if (!entry) return null;
+      const { mod, globals } = entry;
+      const C = mod && mod[name] || globals && globals[name] || typeof window !== "undefined" && window[name] || mod && mod.default;
+      if (typeof C === "function") return C;
+      const key = url + "\0" + name;
+      if (!reportedMissing.has(key)) {
+        reportedMissing.set(
+          key,
+          entry.error || 'no export named "' + name + '" (has: ' + Object.keys(mod).join(", ") + ")"
+        );
+        console.error(
+          "[dc-runtime] x-import: module",
+          url,
+          "loaded but has no component named",
+          JSON.stringify(name),
+          "\u2014 available exports:",
+          Object.keys(mod),
+          "window globals:",
+          Object.keys(globals),
+          ". The module must `module.exports = {" + name + "}` or set `window." + name + "`."
+        );
+      }
+      return null;
+    }
+    function waitForGlobal(name) {
+      if (polling.has(name)) return;
+      polling.add(name);
+      const started = Date.now();
+      const isCE = isCustomElementName(name);
+      const tick = () => {
+        const found = isCE ? customElements.get(name) : isRenderableType(resolveDottedPath(window, name));
+        if (found) {
+          polling.delete(name);
+          onResolved();
+          return;
+        }
+        if (Date.now() - started >= GLOBAL_POLL_TIMEOUT_MS) {
+          console.warn(
+            "[dc-runtime] x-import: global",
+            JSON.stringify(name),
+            "never appeared on window after " + GLOBAL_POLL_TIMEOUT_MS + "ms"
+          );
+          return;
+        }
+        setTimeout(tick, GLOBAL_POLL_INTERVAL_MS);
+      };
+      setTimeout(tick, GLOBAL_POLL_INTERVAL_MS);
+    }
+    function resolveGlobal(url, name) {
+      const isCE = isCustomElementName(name);
+      if (!url) {
+        if (isCE) {
+          if (customElements.get(name)) return name;
+          waitForGlobal(name);
+          return null;
+        }
+        const g2 = resolveDottedPath(window, name);
+        if (isRenderableType(g2)) return g2;
+        waitForGlobal(name);
+        return null;
+      }
+      const entry = cache.get(url);
+      if (!entry) return null;
+      if (isCE && customElements.get(name)) return name;
+      const g = entry.globals[name] ?? resolveDottedPath(window, name);
+      if (isRenderableType(g)) return g;
+      if (name.includes(".")) return null;
+      const key = url + "\0global\0" + name;
+      if (!reportedMissing.has(key)) {
+        reportedMissing.set(key, null);
+        if (isCE && !customElements.get(name)) {
+          console.warn(
+            "[dc-runtime] x-import:",
+            url,
+            "loaded but no custom element",
+            JSON.stringify(name),
+            "is registered and window." + name + " is not a function \u2014 rendering <" + name + "> as an unknown element."
+          );
+        }
+      }
+      return name;
+    }
+    function getError(url, name) {
+      const entry = cache.get(url);
+      if (entry?.error) return entry.error;
+      return reportedMissing.get(url + "\0" + name) || null;
+    }
+    return { load, resolve: resolve2, resolveGlobal, getError };
+  }
+  function isElementClass(g) {
+    try {
+      return typeof g === "function" && typeof HTMLElement !== "undefined" && g.prototype instanceof HTMLElement;
+    } catch {
+      return false;
+    }
+  }
+
+  // src/atomics.ts
+  var ATOMIC_CSS = (
+    // layout
+    ".fx{display:flex}.col{display:flex;flex-direction:column}.grid{display:grid}.ac{align-items:center}.jc{justify-content:center}.jb{justify-content:space-between}.f1{flex:1}.noshrink{flex-shrink:0}.wrap{flex-wrap:wrap}.fw5{font-weight:500}.fw6{font-weight:600}.fw7{font-weight:700}.fw8{font-weight:800}.fs11{font-size:11px}.fs12{font-size:12px}.fs13{font-size:13px}.fs14{font-size:14px}.fs15{font-size:15px}.fs16{font-size:16px}.fs20{font-size:20px}.fs22{font-size:22px}.upper{text-transform:uppercase}.tc{text-align:center}.nowrap{white-space:nowrap}.gap8{gap:8px}.gap10{gap:10px}.gap12{gap:12px}.gap16{gap:16px}.gap24{gap:24px}.m0{margin:0}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.posrel{position:relative}.posabs{position:absolute}.round{border-radius:50%}.ohide{overflow:hidden}.bbox{box-sizing:border-box}.pointer{cursor:pointer}.w100{width:100%}.b0{border:none}"
+  );
+
+  // src/helmet.ts
+  var DESIGN_DOC_MODE_RE = /<meta\b[^>]*\bname\s*=\s*["']design_doc_mode["'][^>]*\b(?:content|value)\s*=\s*["'](\w+)["']/i;
+  var CANVAS_BG_LIGHT = "#f0eee6";
+  var CANVAS_BG_DARK = "#2e2c26";
+  function createHelmetManager(doc, isStreaming) {
+    const mounted = /* @__PURE__ */ new Set();
+    const live = /* @__PURE__ */ new Map();
+    let designDocMode = null;
+    let canvasStyleEl = null;
+    let appTheme = "light";
+    try {
+      const ds = doc.documentElement.dataset.theme;
+      appTheme = ds === "dark" || ds === "light" ? ds : new URLSearchParams(doc.defaultView?.location.search ?? "").get(
+        "theme"
+      ) === "dark" ? "dark" : "light";
+    } catch {
+    }
+    function applyCanvasBg() {
+      if (!canvasStyleEl) return;
+      const bg = appTheme === "dark" ? CANVAS_BG_DARK : CANVAS_BG_LIGHT;
+      canvasStyleEl.textContent = `html,body{background:${bg}}#dc-root>.sc-host{position:relative}`;
+    }
+    function postDesignMode(mode) {
+      if (window.parent === window) return;
+      try {
+        window.parent.postMessage({ type: "__dc_design_mode", mode }, "*");
+      } catch {
+      }
+    }
+    function setDesignDocMode(mode) {
+      if (mode === designDocMode) return;
+      designDocMode = mode;
+      postDesignMode(mode);
+      if (mode === "canvas") {
+        doc.documentElement.setAttribute("data-dc-canvas", "");
+        canvasStyleEl = doc.createElement("style");
+        canvasStyleEl.setAttribute("data-dc-canvas", "");
+        applyCanvasBg();
+        doc.head.appendChild(canvasStyleEl);
+      } else {
+        doc.documentElement.removeAttribute("data-dc-canvas");
+        canvasStyleEl?.remove();
+        canvasStyleEl = null;
+      }
+    }
+    window.addEventListener("message", (e) => {
+      const type = e.data && e.data.type;
+      if (type === "__dc_theme") {
+        const t = e.data.theme;
+        if (t === "light" || t === "dark") {
+          appTheme = t;
+          applyCanvasBg();
+        }
+        return;
+      }
+      if (!designDocMode || type !== "__dc_probe") return;
+      postDesignMode(designDocMode);
+    });
+    function compile(node) {
+      const raw = [...node.children];
+      const helmetClosed = node.nextSibling != null || node.parentNode?.nextSibling != null;
+      if (node.hasAttribute("data-dc-atomics") && !mounted.has("__dc-atomics")) {
+        mounted.add("__dc-atomics");
+        const el = doc.createElement("style");
+        el.id = "__dc-atomics";
+        el.textContent = ATOMIC_CSS;
+        doc.head.appendChild(el);
+      }
+      return (_vals, ctx) => {
+        const name = ctx && ctx.__name || "";
+        const streaming = !!(name && isStreaming(name));
+        for (let i = 0; i < raw.length; i++) {
+          const child = raw[i];
+          const tag = child.tagName;
+          const mayBePartial = streaming && !helmetClosed && i === raw.length - 1;
+          if (tag === "SCRIPT") {
+            if (mayBePartial) continue;
+            const key = "SCRIPT|" + (child.getAttribute("src") || child.textContent || "");
+            if (mounted.has(key)) continue;
+            mounted.add(key);
+            const el = doc.createElement("script");
+            for (const { name: an, value } of [...child.attributes])
+              el.setAttribute(an, value);
+            if (child.textContent) el.textContent = child.textContent;
+            doc.head.appendChild(el);
+          } else if (tag === "LINK" || tag === "META") {
+            if (mayBePartial) continue;
+            const key = tag + "|" + (child.getAttribute("href") || child.getAttribute("src") || child.outerHTML);
+            if (mounted.has(key)) continue;
+            mounted.add(key);
+            if (tag === "LINK") {
+              const rel = (child.getAttribute("rel") || "").toLowerCase().split(/\s+/);
+              const href = (child.getAttribute("href") || "").trim();
+              const res = window.__resources;
+              const pre = res && rel.includes("stylesheet") && !rel.includes("alternate") ? res[href] : void 0;
+              const blob = typeof pre === "string" && pre ? bundledBlob(pre) : null;
+              if (blob) {
+                const el = doc.createElement("style");
+                if (child.hasAttribute("disabled")) {
+                  el.setAttribute("media", "not all");
+                } else if (child.getAttribute("media")) {
+                  el.setAttribute("media", child.getAttribute("media"));
+                }
+                if (child.getAttribute("title"))
+                  el.setAttribute("title", child.getAttribute("title"));
+                void blob.text().then((css) => {
+                  el.textContent = css;
+                });
+                doc.head.appendChild(el);
+                continue;
+              }
+            }
+            doc.head.appendChild(child.cloneNode(true));
+          } else {
+            const key = name + "|" + i;
+            let el = live.get(key);
+            if (!el || el.tagName !== tag) {
+              if (el) el.remove();
+              el = doc.createElement(tag.toLowerCase());
+              live.set(key, el);
+              doc.head.appendChild(el);
+            }
+            for (const { name: an, value } of [...child.attributes]) {
+              if (el.getAttribute(an) !== value) el.setAttribute(an, value);
+            }
+            if (el.textContent !== child.textContent)
+              el.textContent = child.textContent;
+          }
+        }
+        return null;
+      };
+    }
+    return { compile, setDesignDocMode };
+  }
+
+  // src/pseudo.ts
+  function scanUnquotedUrl(css, i) {
+    if (css[i] !== "u" && css[i] !== "U" || css.slice(i, i + 4).toLowerCase() !== "url(" || /[a-z0-9_-]/i.test(css[i - 1] ?? "")) {
+      return -1;
+    }
+    let j = i + 4;
+    while (j < css.length && /\s/.test(css[j])) j++;
+    if (css[j] === '"' || css[j] === "'") return -1;
+    while (j < css.length && css[j] !== ")") {
+      if (css[j] === "\\") j++;
+      j++;
+    }
+    return j < css.length ? j + 1 : css.length;
+  }
+  function stripComments(css) {
+    let out = "";
+    let quote = "";
+    for (let i = 0; i < css.length; i++) {
+      const c = css[i];
+      if (quote) {
+        if (c === "\\") {
+          out += c + (css[i + 1] ?? "");
+          i++;
+          continue;
+        }
+        if (c === quote) quote = "";
+        out += c;
+      } else if (c === "'" || c === '"') {
+        quote = c;
+        out += c;
+      } else if (c === "/" && css[i + 1] === "*") {
+        const end = css.indexOf("*/", i + 2);
+        i = end === -1 ? css.length : end + 1;
+        out += " ";
+      } else {
+        const end = scanUnquotedUrl(css, i);
+        if (end === -1) out += c;
+        else {
+          out += css.slice(i, end);
+          i = end - 1;
+        }
+      }
+    }
+    return out;
+  }
+  function importantify(css) {
+    css = stripComments(css);
+    const decls = [];
+    let start = 0;
+    let depth = 0;
+    let quote = "";
+    for (let i = 0; i < css.length; i++) {
+      const c = css[i];
+      if (quote) {
+        if (c === "\\") i++;
+        else if (c === quote) quote = "";
+      } else if (c === "'" || c === '"') quote = c;
+      else if (c === "(") depth++;
+      else if (c === ")") depth = Math.max(0, depth - 1);
+      else if (c === ";" && depth === 0) {
+        decls.push(css.slice(start, i));
+        start = i + 1;
+      } else {
+        const end = scanUnquotedUrl(css, i);
+        if (end !== -1) i = end - 1;
+      }
+    }
+    decls.push(css.slice(start));
+    return decls.map((d) => d.trim()).filter(Boolean).map((d) => /!\s*important$/i.test(d) ? d : d + " !important").join(";");
+  }
+  function createPseudoSheet(doc) {
+    let el = null;
+    const cache = /* @__PURE__ */ new Map();
+    let n = 0;
+    return (pseudo, css) => {
+      const k = pseudo + "|" + css;
+      const hit = cache.get(k);
+      if (hit) return hit;
+      if (!el) {
+        el = doc.createElement("style");
+        doc.head.appendChild(el);
+      }
+      const cls = "scp" + (n++).toString(36);
+      const isPseudoElement = pseudo === "before" || pseudo === "after";
+      const sel = isPseudoElement ? "." + cls + "::" + pseudo : "." + cls + ":" + pseudo;
+      el.sheet.insertRule(
+        sel + "{" + (isPseudoElement ? css : importantify(css)) + "}",
+        el.sheet.cssRules.length
+      );
+      cache.set(k, cls);
+      return cls;
+    };
+  }
+
+  // src/registry.ts
+  function createRegistry() {
+    const entries = /* @__PURE__ */ Object.create(null);
+    function get(name) {
+      return entries[name] || (entries[name] = {
+        html: "",
+        tpl: null,
+        Logic: null,
+        jsStreaming: false,
+        htmlStreaming: false,
+        ver: 0,
+        subs: /* @__PURE__ */ new Set(),
+        fetched: false
+      });
+    }
+    function bump(name) {
+      const r = get(name);
+      r.ver++;
+      for (const fn of r.subs) fn();
+    }
+    return {
+      entries,
+      get,
+      bump,
+      bumpAll() {
+        for (const n in entries) bump(n);
+      }
+    };
+  }
+
+  // src/runtime.ts
+  var COMPONENT_DIR = ".";
+  function createRuntime(doc = document) {
+    const registry = createRegistry();
+    const pseudoClass = createPseudoSheet(doc);
+    const helmet = createHelmetManager(
+      doc,
+      (name) => registry.get(name).htmlStreaming
+    );
+    const external = createExternalModules(() => registry.bumpAll());
+    const factory = createComponentFactory(registry, ensureFetched);
+    const host = {
+      component: (name) => factory.getDC(name),
+      placeholder: (props) => h(Placeholder, props),
+      helmet: (node) => helmet.compile(node),
+      loadExternal: (kind, url, after) => external.load(kind, url, after),
+      resolveExternal: (url, name) => external.resolve(url, name),
+      resolveExternalGlobal: (url, name) => external.resolveGlobal(url, name),
+      resolveExternalError: (url, name) => external.getError(url, name),
+      pseudoClass
+    };
+    function ensureFetched(name) {
+      const r = registry.get(name);
+      if (r.fetched) return;
+      r.fetched = true;
+      const url = COMPONENT_DIR + "/" + encodeURIComponent(name) + ".dc.html";
+      const res = window.__resources;
+      const pre = res ? res[url] : void 0;
+      const target = typeof pre === "string" && pre ? pre : url;
+      const blob = bundledBlob(target);
+      (blob ? blob.text() : fetch(target).then((res2) => {
+        if (!res2.ok) {
+          console.error(
+            '[dc-runtime] sibling fetch for "' + name + '" failed:',
+            url,
+            "returned",
+            res2.status,
+            "\u2014 the reference renders as an empty placeholder."
+          );
+          return "";
+        }
+        return res2.text();
+      })).then((t) => {
+        if (!t) return;
+        const parsed = parseDcText(t);
+        if (!parsed) {
+          console.error(
+            '[dc-runtime] sibling fetch for "' + name + '":',
+            url,
+            "has no <x-dc> block \u2014 not a Design Component."
+          );
+          return;
+        }
+        if (parsed.props) r.propsMeta = parsed.props;
+        if (parsed.preview) r.preview = parsed.preview;
+        if (parsed.template && !r.html) updateHtml(name, parsed.template);
+        if (parsed.js && !r.Logic) updateJs(name, parsed.js);
+      }).catch(
+        (e) => console.error(
+          '[dc-runtime] sibling fetch for "' + name + '" threw:',
+          url,
+          e
+        )
+      );
+    }
+    let rootName = null;
+    function updateHtml(name, html) {
+      const r = registry.get(name);
+      r.html = html;
+      if (name === rootName) {
+        const mode = DESIGN_DOC_MODE_RE.exec(html)?.[1] ?? null;
+        if (mode || !r.htmlStreaming) helmet.setDesignDocMode(mode);
+      }
+      try {
+        r.tpl = compileTemplate(html, host);
+      } catch (e) {
+        console.error("[dc-runtime] template compile FAILED for", name, e);
+      }
+      registry.bump(name);
+    }
+    function updateJs(name, src) {
+      const r = registry.get(name);
+      const seq = r.jsSeq = (r.jsSeq || 0) + 1;
+      try {
+        const Cls = evalDcLogic(src);
+        if (r.jsSeq !== seq) return;
+        if (typeof Cls !== "function") {
+          r.logicError = name + ".dc.html: <script data-dc-script> must define `class Component extends DCLogic`";
+        } else {
+          r.logicError = null;
+          r.Logic = Cls;
+        }
+      } catch (e) {
+        if (r.jsSeq !== seq) return;
+        console.error(
+          "[dc-runtime] logic class eval FAILED for",
+          name,
+          "\u2014 the template renders with props only.",
+          e
+        );
+        r.logicError = name + ": " + (e instanceof Error && e.message ? e.message : String(e));
+      }
+      registry.bump(name);
+    }
+    function setStreaming(name, kind, on) {
+      const r = registry.get(name);
+      if (kind === "html") r.htmlStreaming = !!on;
+      else r.jsStreaming = !!on;
+      let any = false;
+      for (const n in registry.entries) {
+        const e = registry.entries[n];
+        if (e && (e.htmlStreaming || e.jsStreaming)) {
+          any = true;
+          break;
+        }
+      }
+      doc.documentElement.classList.toggle("sc-dc-streaming", any);
+      registry.bump(name);
+    }
+    function dcUpdate(name, kind, content, streaming) {
+      if (streaming) registry.get(name).fetched = true;
+      if (kind === "html") {
+        setStreaming(name, "html", !!streaming);
+        updateHtml(name, content);
+      } else if (kind === "js") {
+        setStreaming(name, "js", !!streaming);
+        if (!streaming) updateJs(name, content);
+      } else if (kind === "props") {
+        const { props, preview } = parseDataProps(content);
+        const r = registry.get(name);
+        r.propsMeta = props ?? void 0;
+        r.preview = preview;
+        registry.bump(name);
+      }
+    }
+    function setProps(name, overrides) {
+      registry.get(name).propOverrides = overrides && typeof overrides === "object" ? { ...overrides } : null;
+      registry.bump(name);
+    }
+    function adoptParsed(name, parsed) {
+      if (!parsed) return;
+      const r = registry.get(name);
+      if (parsed.props) r.propsMeta = parsed.props;
+      if (parsed.preview) r.preview = parsed.preview;
+      if (parsed.template) updateHtml(name, parsed.template);
+      if (parsed.js) updateJs(name, parsed.js);
+    }
+    return {
+      registry,
+      getDC: factory.getDC,
+      updateHtml,
+      updateJs,
+      dcUpdate,
+      setProps,
+      adoptParsed,
+      setRootName: (name) => {
+        rootName = name;
+      },
+      markFetched: (name) => {
+        registry.get(name).fetched = true;
+      },
+      annotatedTemplate: (name) => {
+        const r = registry.get(name);
+        return r.tpl && r.tpl.__annotated || null;
+      },
+      templateSource: (name) => registry.get(name).html || null,
+      StreamableLogic
+    };
+  }
+
+  // src/stream-state.ts
+  function createStreamTracker(staleMs = 6e4, now = Date.now) {
+    const since = /* @__PURE__ */ new Map();
+    const liveOne = (n) => {
+      const t = since.get(n);
+      if (t === void 0) return false;
+      if (now() - t > staleMs) {
+        since.delete(n);
+        return false;
+      }
+      return true;
+    };
+    return {
+      push(name, streaming, viewportKey) {
+        if (viewportKey === "dc-model") return;
+        if (streaming) since.set(name, now());
+        else since.delete(name);
+      },
+      live(name) {
+        if (name !== void 0) return liveOne(name);
+        for (const n of [...since.keys()]) if (liveOne(n)) return true;
+        return false;
+      }
+    };
+  }
+
+  // src/index.ts
+  function hideRawTemplate() {
+    const s = document.createElement("style");
+    s.textContent = "x-dc{display:none!important}";
+    document.head.appendChild(s);
+  }
+  function loadScript(src, integrity) {
+    return new Promise((resolve2, reject) => {
+      //! nosemgrep: create-script-element
+      const s = document.createElement("script");
+      s.src = src;
+      if (integrity) {
+        s.integrity = integrity;
+        s.crossOrigin = "anonymous";
+      }
+      s.async = false;
+      s.onload = () => resolve2();
+      s.onerror = () => reject(new Error(`failed to load ${src}`));
+      document.head.appendChild(s);
+    });
+  }
+  function loadReactUmd() {
+    const w = window;
+    if (w.React && w.ReactDOM) return Promise.resolve();
+    const react = cdnScriptFor(REACT_URL, REACT_SRI);
+    const reactDom = cdnScriptFor(REACT_DOM_URL, REACT_DOM_SRI);
+    return Promise.all([
+      loadScript(react.src, react.integrity),
+      loadScript(reactDom.src, reactDom.integrity)
+    ]).then(() => void 0);
+  }
+  function init() {
+    const runtime = createRuntime(document);
+    let rootName = "Root";
+    const baseCss = document.createElement("style");
+    baseCss.textContent = BASE_CSS;
+    document.head.prepend(baseCss);
+    const notifyHost = () => {
+      if (window.parent === window) return;
+      const r = runtime.registry.entries[rootName];
+      try {
+        window.parent.postMessage(
+          {
+            type: "__dc_booted",
+            rootName,
+            propsMeta: r && r.propsMeta || null,
+            preview: r && r.preview || null
+          },
+          "*"
+        );
+      } catch {
+      }
+    };
+    const streams = createStreamTracker();
+    const api = {
+      __dcUpdate: (name, kind, content, streaming, viewportKey) => {
+        streams.push(name, streaming, viewportKey);
+        runtime.dcUpdate(name, kind, content, streaming);
+        if (name === rootName && !streaming && kind === "props") notifyHost();
+      },
+      __dcStreaming: (name) => streams.live(name),
+      __dcSetProps: (name, overrides) => runtime.setProps(name, overrides),
+      /** Name of the component currently mounted as the page root — DC tools
+       *  push their template-stream here when targeting "the open page". */
+      __dcRootName: () => rootName,
+      /** Editor bridge — the encoded, `data-dc-tpl`-annotated template source.
+       *  The host editor parses this into its own template DOM so it can map a
+       *  rendered node (carrying the same `data-dc-tpl`) back to the source
+       *  node that emitted it. Returns the encoded form (`sc-camel-*` attrs,
+       *  `<sc-raw-*>`/`<sc-helmet>` tags); the editor decodes on serialize. */
+      __dcAnnotatedTemplate: (name) => runtime.annotatedTemplate(name),
+      /** Editor bridge — the *original* (decoded) template source. */
+      __dcTemplateSource: (name) => runtime.templateSource(name),
+      __dcBoot: () => {
+        rootName = boot(runtime, document) ?? rootName;
+        notifyHost();
+      },
+      __dcRegistry: runtime.registry.entries,
+      getDC: (name) => runtime.getDC(name),
+      // `DCLogic` is the documented base class name; `StreamableLogic` is the
+      // implementation alias kept for any project that already references it.
+      DCLogic: runtime.StreamableLogic,
+      StreamableLogic: runtime.StreamableLogic
+    };
+    Object.assign(window, api);
+    window.__dcContentKeyed = true;
+    if (document.readyState !== "loading") api.__dcBoot();
+    else document.addEventListener("DOMContentLoaded", () => api.__dcBoot());
+  }
+  hideRawTemplate();
+  loadReactUmd().then(init).catch((err) => {
+    console.error("[dc] failed to load React or boot:", err);
+    throw err;
+  });
+})();
+
+</script>
+
+<!-- Offline support: cache the app + its CDN assets after the first visit -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
