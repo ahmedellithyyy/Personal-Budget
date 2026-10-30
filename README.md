@@ -79,3 +79,23 @@ chosen currency survive reloads. Clear it to return to the sample data:
 ```js
 localStorage.removeItem('ledger.v1')
 ```
+
+## Day Trader skills (Claude Code)
+
+The `.claude/skills/` folder carries the eleven `trader-*` skills from
+[Jakeschincariol/day-trader-skill](https://github.com/Jakeschincariol/day-trader-skill)
+(MIT, see `.claude/skills/LICENSE-day-trader-skill`), installed project-local
+so they show up as plain `/trader-scanner`, `/trader-news`, `/trader-entry`,
+`/trader-exit`, `/trader-timemachine`, `/trader-budget`, `/trader-risk`,
+`/trader-broker`, `/trader-alerts`, `/trader-analyst` and `/trader-pelosi`.
+
+The tools are standard-library Python 3.8+ (nothing to install) reading free
+public data: Yahoo Finance, Nasdaq Trader, SEC EDGAR, the House Clerk. They
+write their state to a `trader/` folder at the repo root, which is
+git-ignored. Before using the SEC-backed skills (`trader-news`,
+`trader-analyst`) copy `.claude/skills/trader-budget/config.example.json` to
+`trader/config.json` and set `sec_user_agent` to your name and email, or
+export `SEC_USER_AGENT`.
+
+Paper trading is the default and nothing places an order without an explicit
+yes. Not financial advice.
