@@ -84,7 +84,10 @@ def analyse(sym, anchor=None):
     svwap = vwap(s_bars) if s_bars else None
 
     last = meta.get("regularMarketPrice") or closes[-1]
-    prev = meta.get("chartPreviousClose") or (closes[-2] if len(closes) > 1 else None)
+    # previous close: Yahoo's own field, else the daily bar before the one that matches "last"
+    prev = meta.get("regularMarketPreviousClose")
+    if not prev and len(closes) > 1:
+        prev = closes[-2] if abs(last - closes[-1]) < 1e-9 else closes[-1]
     move = (last / prev - 1) * 100 if prev else None
 
     def rel(x):
