@@ -84,11 +84,17 @@ def analyse(sym, anchor=None):
     svwap = vwap(s_bars) if s_bars else None
 
     last = meta.get("regularMarketPrice") or closes[-1]
-    # previous close: Yahoo's own field, else the daily bar before the one that matches "last"
-    prev = meta.get("regularMarketPreviousClose")
-    if not prev and len(closes) > 1:
+    # day move: Yahoo's own regular-session change, else last vs the prior daily bar
+    move = meta.get("regularMarketChangePercent")
+    if move is None and len(closes) > 1:
         prev = closes[-2] if abs(last - closes[-1]) < 1e-9 else closes[-1]
-    move = (last / prev - 1) * 100 if prev else None
+        move = (last / prev - 1) * 100
+    prev = last / (1 + move / 100) if move is not None else None
+    # pre/post-market print, when Yahoo has one that differs from the regular-session price
+    ext = meta.get("fulldayPrice")
+    ext_pct = meta.get("fulldayChangePercent")
+    if ext is None or abs(ext - last) < 1e-9:
+        ext, ext_pct = None, None
 
     def rel(x):
         return None if x is None else (last / x - 1) * 100
@@ -99,6 +105,7 @@ def analyse(sym, anchor=None):
         "anchor_date": a_date.isoformat(), "anchored_vwap": avwap, "vs_anchored_vwap_pct": rel(avwap),
         "ema9": ema9_now, "vs_ema9_pct": rel(ema9_now),
         "ema9_slope": None if None in (ema9_now, ema9_prev) else ("up" if ema9_now > ema9_prev else "down"),
+        "ext_price": ext, "ext_move_pct": ext_pct,
         "session": last_day.isoformat() if last_day else None,
     }
     out["read"] = read(out)
@@ -151,6 +158,8 @@ def main():
             fmt(r["session_vwap"]), fmt(r["vs_session_vwap_pct"], 1),
             fmt(r["anchored_vwap"]), fmt(r["vs_anchored_vwap_pct"], 1),
             fmt(r["ema9"]), fmt(r["vs_ema9_pct"], 1), r["ema9_slope"] or "-"))
+        if r["ext_price"] is not None:
+            print("       pre/post-market %s (%s%% vs last close)" % (fmt(r["ext_price"]), fmt(r["ext_move_pct"], 1)))
         print("       anchor %s | %s" % (r["anchor_date"], r["read"]))
     for e in errors:
         print("note:", e)
