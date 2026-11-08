@@ -1,3 +1,7 @@
 # Runtime state written by the trader-* skills (watchlist, plan, orders, risk verdicts, prices).
 # Keep trader/config.json local: it carries your name/email for the SEC User-Agent and your account limits.
 trader/
+
+# Python bytecode caches
+__pycache__/
+*.pyc
