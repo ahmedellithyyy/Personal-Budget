@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agro Green | Sweet potato, onions and green beans grown in Egyptian sand soil</title>
+<meta name="description" content="Agro Green grows, packs and exports sweet potato, dry onions and green beans from 5,000 acres of sand soil in Egypt. Request a quote for UK and EU supply.">
+<meta name="theme-color" content="#17402A">
+<meta property="og:title" content="Agro Green | Grown in sand">
+<meta property="og:description" content="Sweet potato, dry onions and green beans from 5,000 acres of Egyptian sand soil. Grown, packed and shipped by one team.">
+<meta property="og:type" content="website">
+<!-- DEPLOY STEP: replace both URLs below with the live address before going online -->
+<meta property="og:url" content="https://agrogreen.co.uk/">
+<meta property="og:image" content="https://agrogreen.co.uk/assets/hero-ending.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317402A'/%3E%3Cpath d='M32 50c-2-14 2-26 14-34-1 14-5 25-14 34z' fill='%23E9D5AE'/%3E%3Cpath d='M30 50c-1-10-6-18-14-22 0 10 5 18 14 22z' fill='%23C9652B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Mono&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#E9D5AE; --panel:#F3E6C8; --deep:#17402A; --deep-2:#0F2E1D;
+  --accent:#9C3F14; --accent-hover:#7F3210; --accent-muted:rgba(156,63,20,.28);
+  --text-primary:#16301F; --text-secondary:#46563F; --cream:#FBF3DF; --line:#8A7A52;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.22,.8,.24,1); --ease-soft:cubic-bezier(.4,0,.2,1);
+  --tshadow:0 1px 2px rgba(28,14,4,.95),0 3px 12px rgba(28,14,4,.78),0 10px 44px rgba(28,14,4,.8);
+  --gutter:clamp(16px,5vw,72px);
+}
+*{box-sizing:border-box}
+html,body{overflow-x:hidden;overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--canvas);color:var(--text-primary);font:400 17px/1.6 var(--body);-webkit-font-smoothing:antialiased;animation:pagein .7s var(--ease-soft) both}
+@keyframes pagein{from{opacity:0}to{opacity:1}}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--display);line-height:1.04;margin:0;letter-spacing:-.02em}
+h2{font-size:clamp(2rem,4.4vw,3.6rem);font-weight:800}
+h3{font-size:1.4rem;font-weight:600}
+p{margin:0}
+.mono{font:400 .78rem/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:fixed;left:12px;top:-60px;z-index:100;background:var(--cream);color:var(--deep);padding:10px 14px;border-radius:8px;transition:top .25s var(--ease)}
+.skip:focus{top:12px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.hero :focus-visible,.nav :focus-visible,footer :focus-visible,.stats :focus-visible{outline-color:var(--cream)}
+
+/* fixed environment layer: sand grain and a slow drifting glow */
+.env{position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--canvas)}
+.env::before{content:"";position:absolute;inset:-20%;background:radial-gradient(ellipse 40% 34% at 30% 30%,rgba(255,236,190,.75),rgba(255,236,190,0) 70%),radial-gradient(ellipse 38% 30% at 75% 70%,rgba(201,101,43,.13),rgba(201,101,43,0) 70%);animation:drift 80s var(--ease-soft) -20s infinite alternate}
+.env::after{content:"";position:absolute;inset:0;opacity:.2;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+@keyframes drift{from{transform:translate3d(-4%,-3%,0)}to{transform:translate3d(5%,4%,0)}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;padding:.85em 1.4em;border-radius:999px;border:0;background:var(--accent);color:var(--cream);font:600 1rem/1 var(--body);text-decoration:none;cursor:pointer;transition:background .3s var(--ease),transform .3s var(--ease)}
+.btn:hover{background:var(--accent-hover);transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--cream);box-shadow:inset 0 0 0 1.5px rgba(251,243,223,.75)}
+.btn.ghost:hover{background:rgba(251,243,223,.14)}
+@media (pointer:coarse){.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}}
+
+/* nav */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px var(--gutter);color:var(--cream);transition:background .5s var(--ease),box-shadow .5s var(--ease)}
+.nav.solid{background:rgba(15,46,29,.94);box-shadow:0 6px 30px rgba(15,46,29,.25)}
+.nav img{height:38px;width:auto;filter:drop-shadow(0 1px 6px rgba(28,14,4,.6))}
+.nav ul{display:flex;gap:clamp(12px,2.2vw,30px);list-style:none;margin:0;padding:0;align-items:center}
+.nav a.l{text-decoration:none;font-weight:600;font-size:.95rem;text-shadow:0 1px 8px rgba(28,14,4,.7);padding:10px 2px;background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat;transition:background-size .35s var(--ease)}
+.nav a.l:hover{background-size:100% 1.5px}
+.nav .btn{padding:.7em 1.1em;font-size:.92rem}
+@media (max-width:820px){.nav li.h{display:none}}
+
+/* hero */
+.hero{position:relative;height:500vh;background:#7a4a1c}
+.stage{position:sticky;top:0;height:100vh;overflow:hidden;color:var(--cream)}
+.poster,.stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center}
+.stage video{opacity:0;transition:opacity .9s var(--ease-soft);transform:translateZ(0)}
+.video-ready video{opacity:1}
+.video-failed video{display:none}
+.scrim{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 45%,rgba(28,14,4,0) 35%,rgba(28,14,4,.5) 100%),linear-gradient(rgba(28,14,4,.42),rgba(28,14,4,0) 22%)}
+.band{position:absolute;top:50%;width:min(26vw,400px);transform:translateY(-50%);opacity:0;text-shadow:var(--tshadow);pointer-events:none}
+.band.on{pointer-events:auto}
+.band.left{left:var(--gutter)}
+.band.right{right:var(--gutter)}
+.band::before{content:"";position:absolute;inset:-70% -45%;z-index:-1;pointer-events:none;opacity:calc(.3 + .7*var(--k,1));background:radial-gradient(ellipse 50% 50% at 50% 50%,rgba(28,14,4,.74) 0%,rgba(28,14,4,.5) 45%,rgba(28,14,4,0) 74%)}
+.band .mono{display:block;margin-bottom:1.1em;opacity:calc(var(--k,0)*.95)}
+.band .big{font:800 clamp(2rem,3.5vw,3.5rem)/1.02 var(--display);letter-spacing:-.025em;margin:0}
+.band p.sub{margin-top:1em;font-size:clamp(1rem,1.25vw,1.2rem);line-height:1.45;max-width:34ch;--ks:clamp(0,(var(--k,0) - .55)*4,1);opacity:var(--ks);transform:translateY(calc((1 - var(--ks))*10px))}
+.band .row{margin-top:1.5em;display:flex;flex-wrap:wrap;gap:12px;--kb:clamp(0,(var(--k,0) - .72)*5,1);opacity:var(--kb);transform:translateY(calc((1 - var(--kb))*12px))}
+.band .btn{text-shadow:none}
+.w{display:inline-block;--kc:clamp(0,(var(--k,0) - var(--th,0))*2.8,1);opacity:var(--kc);will-change:transform,opacity}
+[data-fx=rise] .w{transform:translateY(calc((1 - var(--kc))*.5em))}
+[data-fx=drift] .w{transform:translateY(calc((1 - var(--kc))*-28px))}
+[data-fx=swell] .w{transform:scale(calc(.78 + .22*var(--kc)));transform-origin:0 70%}
+.cue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;text-shadow:var(--tshadow);transition:opacity .6s var(--ease)}
+.cue i{width:1.5px;height:38px;background:linear-gradient(var(--cream),rgba(251,243,223,0));transform-origin:top;animation:cue 2.6s var(--ease-soft) -1s infinite}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+.cue.gone{opacity:0}
+.static-copy{display:none}
+@media (max-height:560px){.cue{display:none}}
+
+/* static hero: the five gates, identical to the JS list */
+@media (max-width: 720px),(orientation: portrait) and (max-width: 1024px),(orientation: portrait) and (pointer: coarse),(orientation: landscape) and (pointer: coarse) and (max-height: 560px),(prefers-reduced-motion: reduce){
+  .hero{height:auto}
+  .stage{position:relative;height:auto;min-height:100svh;display:flex;align-items:flex-end;background:#7a4a1c url(assets/hero-ending.jpg) center 30%/cover}
+  .stage video,.poster,.band,.cue{display:none}
+  .scrim{background:linear-gradient(rgba(28,14,4,.45),rgba(28,14,4,.05) 30%,rgba(28,14,4,.82) 78%)}
+  .static-copy{display:block;position:relative;padding:120px var(--gutter) 44px;text-shadow:var(--tshadow)}
+  .static-copy h1{font-size:clamp(2.7rem,12vw,4.4rem);font-weight:800}
+  .static-copy p{margin:.8em 0 1.3em;max-width:34ch;font-size:1.08rem}
+  .static-copy .btn{text-shadow:none}
+}
+
+/* layout below the hero */
+main{position:relative}
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--gutter)}
+section{position:relative;padding:clamp(72px,11vw,150px) 0}
+.kick{color:var(--accent);margin-bottom:1.1em;display:block}
+.lede{font-size:clamp(1.05rem,1.5vw,1.25rem);color:var(--text-secondary);max-width:52ch;margin-top:1.1em}
+
+/* entrances */
+.rv .part{opacity:0;transform:translateY(26px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rv.in .part{opacity:1;transform:none}
+.rv .part:nth-child(2){transition-delay:.09s}.rv .part:nth-child(3){transition-delay:.18s}.rv .part:nth-child(4){transition-delay:.27s}.rv .part:nth-child(5){transition-delay:.36s}.rv .part:nth-child(6){transition-delay:.45s}.rv .part:nth-child(7){transition-delay:.54s}.rv .part:nth-child(8){transition-delay:.63s}
+.rv.done .part:nth-child(n){transition-delay:0s}
+
+/* the root line: signature element */
+.root{position:absolute;left:max(10px,calc(50% - 640px));top:0;width:44px;height:100%;pointer-events:none;z-index:1}
+.root path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;opacity:.75}
+.root path.ghost{stroke:var(--line);opacity:.22;stroke-dasharray:2 7}
+@media (max-width:1320px){.root{display:none}}
+
+/* stats */
+.stats{background:var(--deep);color:var(--cream);padding:clamp(48px,7vw,84px) 0}
+.stats .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(18px,3vw,44px)}
+.stats b{display:block;font:800 clamp(2.2rem,5vw,4rem)/1 var(--display);letter-spacing:-.03em}
+.stats span{display:block;margin-top:.7em;color:rgba(251,243,223,.82);font-size:.98rem;max-width:22ch}
+.stats .part{border-top:1.5px solid rgba(251,243,223,.3);padding-top:18px}
+@media (max-width:760px){.stats .grid{grid-template-columns:1fr 1fr}}
+
+/* why sand */
+.why .cols{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,6vw,90px);align-items:center}
+.why figure{margin:0;position:relative;border-radius:26px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 30px 70px -30px rgba(60,30,8,.6)}
+.why figure img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);transition:transform 1.6s var(--ease)}
+.why .rv.in figure img{transform:none}
+.why figcaption{position:absolute;left:16px;bottom:14px;color:var(--cream);background:rgba(28,14,4,.55);padding:7px 11px;border-radius:9px}
+.why ol{list-style:none;margin:2.2em 0 0;padding:0;display:grid;gap:1.5em}
+.why li{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:baseline}
+.why li .mono{color:var(--accent)}
+.why li p{color:var(--text-secondary);margin-top:.3em}
+@media (max-width:860px){.why .cols{grid-template-columns:1fr}.why figure{aspect-ratio:4/3}}
+
+/* produce */
+.produce{background:var(--panel)}
+.produce .head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:clamp(14px,2vw,26px);margin-top:clamp(32px,5vw,60px)}
+.card{background:var(--canvas);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:transform .5s var(--ease),box-shadow .5s var(--ease)}
+.card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -28px rgba(60,30,8,.55)}
+.card .ph{aspect-ratio:4/3;overflow:hidden}
+.card:first-child .ph{aspect-ratio:16/10}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.card:hover img{transform:scale(1.05)}
+.card .tx{padding:22px 22px 24px;display:flex;flex-direction:column;gap:.6em;flex:1}
+.card p{color:var(--text-secondary)}
+.card .season{color:var(--deep);border-top:1.5px solid rgba(23,64,42,.28);padding-top:12px;margin-top:auto}
+.card a{font-weight:600;color:var(--accent);text-decoration:none;padding:6px 0;align-self:flex-start;background:linear-gradient(currentColor,currentColor) 0 100%/100% 1.5px no-repeat}
+.card a:hover{color:var(--accent-hover)}
+@media (max-width:900px){.cards{grid-template-columns:1fr}.card:first-child .ph,.card .ph{aspect-ratio:16/10}}
+
+/* season calendar: the interactive moment */
+.cal{margin-top:clamp(30px,5vw,56px);background:var(--deep);color:var(--cream);border-radius:28px;padding:clamp(20px,3.4vw,44px)}
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.months button{font:400 .8rem/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--cream);background:rgba(251,243,223,.08);border:1.5px solid rgba(251,243,223,.42);border-radius:10px;padding:13px 0;cursor:pointer;transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease)}
+.months button:hover{background:rgba(251,243,223,.2);transform:translateY(-2px)}
+.months button[aria-pressed=true]{background:var(--cream);color:var(--deep);border-color:var(--cream)}
+.rows{margin-top:22px;display:grid;gap:12px}
+.crow{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+.crow .name{font:600 1.02rem/1.2 var(--display)}
+.track{display:grid;grid-template-columns:repeat(12,1fr);gap:6px}
+.track i{height:16px;border-radius:5px;background:rgba(251,243,223,.1);transition:background .5s var(--ease),transform .5s var(--ease),opacity .5s var(--ease)}
+.track i.s{background:#C9652B}
+.crow[data-c=onion] .track i.s{background:#B4476B}
+.crow[data-c=beans] .track i.s{background:#7FB069}
+.track i.now{transform:scaleY(1.9)}
+.track i:not(.now).s{opacity:.62}
+.out{margin-top:26px;display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap;border-top:1.5px solid rgba(251,243,223,.3);padding-top:22px}
+.out p{font:600 clamp(1.15rem,2.1vw,1.6rem)/1.25 var(--display);max-width:30ch}
+.out .btn{background:var(--cream);color:var(--deep)}
+.out .btn:hover{background:#fff}
+@media (max-width:760px){.months{grid-template-columns:repeat(6,1fr)}.crow{grid-template-columns:1fr}}
+
+/* process */
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.8vw,22px);margin-top:clamp(32px,5vw,60px)}
+.step{counter-increment:s;position:relative}
+.step .ph{aspect-ratio:3/4;border-radius:18px;overflow:hidden}
+.step img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.step:hover img{transform:scale(1.05)}
+.step:nth-child(even){margin-top:46px}
+.step h3{margin-top:16px}
+.step h3::before{content:"0" counter(s);font:400 .78rem/1 var(--mono);letter-spacing:.12em;color:var(--accent);display:block;margin-bottom:.7em}
+.step p{color:var(--text-secondary);margin-top:.4em;font-size:.98rem}
+@media (max-width:900px){.steps{grid-template-columns:1fr 1fr}.step:nth-child(even){margin-top:0}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}.step .ph{aspect-ratio:16/10}}
+
+/* standards */
+.std{background:var(--deep);color:var(--cream)}
+.std .kick{color:#F0B48A}
+.std .cols{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(28px,6vw,90px);align-items:start}
+.std .lede{color:rgba(251,243,223,.84)}
+.chips{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:10px}
+.chips li{border:1.5px solid rgba(251,243,223,.5);border-radius:999px;padding:.6em 1.05em;font-weight:600;transition:background .35s var(--ease),color .35s var(--ease)}
+.chips li:hover{background:var(--cream);color:var(--deep)}
+.std small{display:block;margin-top:22px;color:rgba(251,243,223,.8);font-size:.92rem;max-width:46ch}
+@media (max-width:860px){.std .cols{grid-template-columns:1fr}}
+
+/* faq */
+.faq .cols{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(28px,6vw,90px)}
+details{border-top:1.5px solid rgba(23,64,42,.3);padding:6px 0}
+details:last-child{border-bottom:1.5px solid rgba(23,64,42,.3)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:16px 0;font:600 1.15rem/1.3 var(--display)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font:400 1.4rem/1 var(--mono);color:var(--accent);transition:transform .4s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--text-secondary);padding:0 0 18px;max-width:58ch}
+@media (max-width:860px){.faq .cols{grid-template-columns:1fr}}
+
+/* quote */
+.quote{background:var(--panel)}
+.quote .cols{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(28px,6vw,80px);align-items:start}
+form{display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--canvas);border-radius:26px;padding:clamp(20px,3.2vw,40px)}
+label{display:grid;gap:7px;font-weight:600;font-size:.94rem}
+label.full{grid-column:1/-1}
+input,select,textarea{font:400 1rem/1.3 var(--body);color:var(--text-primary);background:var(--cream);border:1.5px solid #7C6E49;border-radius:12px;padding:13px 14px;width:100%;transition:border-color .3s var(--ease),box-shadow .3s var(--ease)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-muted)}
+textarea{min-height:110px;resize:vertical}
+form .btn{grid-column:1/-1;justify-self:start;font-size:1.05rem;padding:1em 1.7em}
+form .note{grid-column:1/-1;color:var(--text-secondary);font-size:.92rem}
+.sent{grid-column:1/-1;background:var(--deep);color:var(--cream);border-radius:14px;padding:16px 18px;opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.sent.show{opacity:1;transform:none}
+.sent[hidden]{display:none}
+.direct{margin-top:2em;display:grid;gap:.5em}
+.direct a{font-weight:600}
+@media (max-width:860px){.quote .cols{grid-template-columns:1fr}}
+@media (max-width:560px){form{grid-template-columns:1fr}}
+
+/* footer */
+footer{background:var(--deep-2);color:rgba(251,243,223,.88);padding:clamp(48px,7vw,84px) 0 32px;font-size:.96rem}
+footer .grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:clamp(24px,5vw,70px)}
+footer img{height:54px;width:auto;margin-bottom:18px}
+footer h3{font:400 .78rem/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#F0B48A;margin-bottom:1em}
+footer address{font-style:normal;display:grid;gap:.25em}
+footer a{text-decoration-thickness:1px;text-underline-offset:3px}
+footer .base{margin-top:44px;padding-top:22px;border-top:1px solid rgba(251,243,223,.28);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:rgba(251,243,223,.78);font-size:.88rem}
+@media (max-width:760px){footer .grid{grid-template-columns:1fr}}
+
+body.paused *,body.paused *::before,body.paused *::after{animation-play-state:paused !important}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important;transition-delay:0s !important}
+  .rv .part{opacity:1;transform:none}
+  .why figure img{transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="env" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Main">
+  <a href="#top" aria-label="Agro Green, back to top"><img src="assets/logo.png" alt="Agro Green" width="624" height="206"></a>
+  <ul>
+    <li class="h"><a class="l" href="#produce">Produce</a></li>
+    <li class="h"><a class="l" href="#season">Season</a></li>
+    <li class="h"><a class="l" href="#process">Process</a></li>
+    <li class="h"><a class="l" href="#standards">Standards</a></li>
+    <li><a class="btn" href="#quote">Request a quote</a></li>
+  </ul>
+</nav>
+
+<header class="hero" id="top">
+  <div class="stage">
+    <div class="poster" aria-hidden="true"></div>
+    <video id="heroVideo" preload="none" muted playsinline aria-hidden="true" tabindex="-1"></video>
+    <div class="scrim" aria-hidden="true"></div>
+
+    <div class="band left" data-a="0" data-b="0.20" data-fx="rise">
+      <span class="mono">Agro Green / Egypt</span>
+      <h1 class="big split">Grown in sand.</h1>
+      <p class="sub">Sweet potato, onions and green beans from 5,000 acres of Egyptian sand soil.</p>
+    </div>
+    <div class="band right" data-a="0.25" data-b="0.47" data-fx="drift">
+      <span class="mono">The soil</span>
+      <p class="big split">Sand soil, steady all year.</p>
+      <p class="sub">Moderate conditions in every season, and a long warm one to grow in.</p>
+    </div>
+    <div class="band left" data-a="0.52" data-b="0.74" data-fx="swell">
+      <span class="mono">The season</span>
+      <p class="big split">Supply through the European winter.</p>
+      <p class="sub">January, February and March included.</p>
+    </div>
+    <div class="band right" data-a="0.80" data-b="1" data-fx="rise" data-ramp="0.05">
+      <span class="mono">One grower</span>
+      <p class="big split">Grown, packed and shipped by us.</p>
+      <p class="sub">One team from tissue culture to the port.</p>
+      <div class="row"><a class="btn" href="#quote">Request a quote</a><a class="btn ghost" href="#season">See the season</a></div>
+    </div>
+
+    <div class="cue" aria-hidden="true"><span class="mono">Scroll</span><i></i></div>
+
+    <div class="static-copy">
+      <span class="mono">Agro Green / Egypt</span>
+      <h1>Grown in sand.</h1>
+      <p>Sweet potato, onions and green beans from 5,000 acres of Egyptian sand soil. Grown, packed and shipped by us.</p>
+      <a class="btn" href="#quote">Request a quote</a>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <svg class="root" aria-hidden="true" preserveAspectRatio="none"><path class="ghost"/><path class="live"/></svg>
+
+  <div class="stats">
+    <div class="wrap grid rv">
+      <div class="part"><b><span data-count="5000">5,000</span></b><span>acres of farms on sand soil</span></div>
+      <div class="part"><b>14°C</b><span>or below, through the whole supply chain</span></div>
+      <div class="part"><b><span data-count="20">20</span>+</b><span>years our team has exported to Europe</span></div>
+      <div class="part"><b>2018</b><span>the year Agro Green was established</span></div>
+    </div>
+  </div>
+
+  <section class="why" id="why">
+    <div class="wrap cols rv">
+      <figure class="part"><img src="assets/hero-ending.jpg" alt="Sweet potatoes growing below the surface in golden sand soil" loading="lazy" width="1280" height="716"><figcaption class="mono">Illustration</figcaption></figure>
+      <div class="part">
+        <span class="mono kick">Why sand</span>
+        <h2>The soil is our edge.</h2>
+        <p class="lede">We farm sand soil in Egypt on purpose. It gives the crop moderate conditions all year, and the long warm season does the rest.</p>
+        <ol>
+          <li><span class="mono">01</span><div><h3>Sand soil</h3><p>Moderate growing conditions in every season, across 5,000 acres.</p></div></li>
+          <li><span class="mono">02</span><div><h3>Tissue culture</h3><p>Our sweet potato is planted from tissue culture, organic and conventional.</p></div></li>
+          <li><span class="mono">03</span><div><h3>A long warm season</h3><p>We ship for most of the year, January to March included.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="produce" id="produce">
+    <div class="wrap">
+      <div class="head rv"><div class="part"><span class="mono kick">Produce</span><h2>Three crops. One grower.</h2></div><p class="lede part">Tell us the spec you buy to. We reply with sizes, pack formats and availability.</p></div>
+      <div class="cards rv">
+        <article class="card part"><div class="ph"><img src="assets/p-sweet.jpg" alt="Freshly lifted Agro Green sweet potatoes held in the field" loading="lazy" width="1200" height="676"></div><div class="tx"><h3>Sweet potato</h3><p>Organic and conventional, planted from tissue culture in sand soil.</p><p class="mono season">Ships 1 July to 1 March</p><a href="#quote" data-pick="Sweet potato">Quote for sweet potato</a></div></article>
+        <article class="card part"><div class="ph"><img src="assets/p-onion.jpg" alt="Red onions from Agro Green in a bulk bag" loading="lazy" width="1200" height="900"></div><div class="tx"><h3>Dry onions</h3><p>Red and brown onions, grown from selected seed.</p><p class="mono season">Ships 1 May to end of July</p><a href="#quote" data-pick="Dry onions">Quote for onions</a></div></article>
+        <article class="card part"><div class="ph"><img src="assets/p-beans.jpg" alt="Green beans packed in an Agro Green export carton" loading="lazy" width="1080" height="500"></div><div class="tx"><h3>Green beans</h3><p>Dwarf green beans from selected varieties, packed for the European market.</p><p class="mono season">Ships 1 September to end of March</p><a href="#quote" data-pick="Green beans">Quote for green beans</a></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="season">
+    <div class="wrap">
+      <div class="rv"><span class="mono kick part">Season calendar</span><h2 class="part">Pick your month.</h2><p class="lede part">Choose the month you need product in. The calendar shows what we are shipping.</p></div>
+      <div class="cal rv">
+        <div class="months part" role="group" aria-label="Choose a month"></div>
+        <div class="rows part">
+          <div class="crow" data-c="sweet"><span class="name">Sweet potato</span><div class="track" aria-hidden="true"></div></div>
+          <div class="crow" data-c="onion"><span class="name">Dry onions</span><div class="track" aria-hidden="true"></div></div>
+          <div class="crow" data-c="beans"><span class="name">Green beans</span><div class="track" aria-hidden="true"></div></div>
+        </div>
+        <div class="out part"><p id="calOut" aria-live="polite"></p><a class="btn" href="#quote" id="calBtn">Request a quote</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="produce" id="process">
+    <div class="wrap">
+      <div class="rv"><span class="mono kick part">Process</span><h2 class="part">From field to port, in our hands.</h2></div>
+      <div class="steps rv">
+        <div class="step part"><div class="ph"><img src="assets/o-grow.jpg" alt="Planting beds in sand soil at an Agro Green farm" loading="lazy" width="905" height="578"></div><h3>Grow</h3><p>Planted in sand soil on our own farms.</p></div>
+        <div class="step part"><div class="ph"><img src="assets/o-cure.jpg" alt="Sweet potatoes in crates with a temperature monitor" loading="lazy" width="1200" height="900"></div><h3>Cure, wash and dry</h3><p>Sweet potato is cured, then washed and dried on the line.</p></div>
+        <div class="step part"><div class="ph"><img src="assets/o-pack.jpg" alt="Agro Green staff packing produce into branded cartons" loading="lazy" width="1200" height="900"></div><h3>Grade and pack</h3><p>Packed by our own team, in boxes chosen for the product.</p></div>
+        <div class="step part"><div class="ph"><img src="assets/o-chill.jpg" alt="Packed cartons stacked in the Agro Green cold store" loading="lazy" width="1024" height="768"></div><h3>Chill and ship</h3><p>Held at 14°C or below, then shipped by air or sea.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="std" id="standards">
+    <div class="wrap cols rv">
+      <div class="part"><span class="mono kick">Standards</span><h2>Audited, then shipped.</h2><p class="lede">Supermarkets ask for proof before price. Ask us for the current certificates with your quote.</p></div>
+      <div class="part">
+        <ul class="chips"><li>GLOBALG.A.P.</li><li>GLOBALG.A.P. GRASP</li><li>Sedex</li><li>BRCGS Food Safety</li><li>Tesco Nurture</li><li>EU Organic</li><li>ISO 9001</li><li>FoodExperts</li></ul>
+        <small>Certificate copies and audit dates are sent on request.</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="wrap cols">
+      <div class="rv"><span class="mono kick part">Questions</span><h2 class="part">What buyers ask first.</h2></div>
+      <div class="rv">
+        <details class="part" open><summary>Which months can you supply?</summary><p>Sweet potato ships from 1 July to 1 March. Dry onions ship from 1 May to the end of July. Green beans ship from 1 September to the end of March.</p></details>
+        <details class="part"><summary>Do you grow organic?</summary><p>Yes. Our sweet potato is grown both organic and conventional, planted from tissue culture.</p></details>
+        <details class="part"><summary>How is the product kept on the way?</summary><p>Product is held at 14°C or below through the supply chain, in temperature controlled packing centres and insulated packaging. We ship by air and by sea.</p></details>
+        <details class="part"><summary>What sizes and pack formats do you offer?</summary><p>Send us your spec in the quote form. We reply with the sizes, pack formats and volumes we can meet for your delivery window.</p></details>
+        <details class="part"><summary>Where are you based?</summary><p>Our farms and packing are in Egypt. We have offices in Cairo and in London.</p></details>
+        <details class="part"><summary>How long have you been exporting?</summary><p>Agro Green was established in 2018. Our team has more than 20 years of experience growing, packing and exporting to the European market.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" id="quote">
+    <div class="wrap cols">
+      <div class="rv">
+        <span class="mono kick part">Request a quote</span>
+        <h2 class="part">Tell us what you need.</h2>
+        <p class="lede part">Product, volume and delivery window. We come back with availability and price.</p>
+        <div class="direct part"><span class="mono">Or reach us directly</span><a href="mailto:info@agrogreen.co.uk">info@agrogreen.co.uk</a><a href="tel:+447850086554">UK +44 7850 086554</a><a href="tel:+20221809236">Egypt +20 2 2180 9236</a></div>
+      </div>
+      <form id="quoteForm" class="rv" novalidate>
+        <label class="part">Product<select name="product" required><option value="">Choose a product</option><option>Sweet potato</option><option>Dry onions</option><option>Green beans</option><option>More than one</option></select></label>
+        <label class="part">Volume<input name="volume" placeholder="For example 2 containers a month" required></label>
+        <label class="part">Destination<input name="destination" placeholder="Port or country" required></label>
+        <label class="part">Delivery window<input name="window" placeholder="For example November to February"></label>
+        <label class="part">Your name<input name="name" autocomplete="name" required></label>
+        <label class="part">Company<input name="company" autocomplete="organization" required></label>
+        <label class="part full">Work email<input type="email" name="email" autocomplete="email" required></label>
+        <label class="part full">Spec or notes<textarea name="notes" placeholder="Sizes, pack format, certificates you need"></textarea></label>
+        <button class="btn part" type="submit">Prepare my request</button>
+        <p class="note part">This opens your email app with the request filled in. Press send there and it reaches our team.</p>
+        <div class="sent" id="sent" role="status" hidden>Your email app should now be open with the request. Press send there. If nothing opened, write to info@agrogreen.co.uk.</div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div><img src="assets/logo.png" alt="Agro Green" loading="lazy" width="624" height="206"><p>Growers, packers and exporters of sweet potato, dry onions and green beans from Egypt.</p></div>
+      <div><h3>Egypt office</h3><address>190 El Hegaz St, Heliopolis<br>Cairo, Egypt<br><a href="tel:+20221809236">+20 2 2180 9236</a></address></div>
+      <div><h3>UK office</h3><address>2 Buckden Close<br>London SE12 8AB<br><a href="tel:+447850086554">+44 7850 086554</a><br><a href="mailto:info@agrogreen.co.uk">info@agrogreen.co.uk</a></address></div>
+    </div>
+    <div class="base"><span>© 2026 Agro Green. All rights reserved.</span><span>The opening film is an illustration made with AI. Farm, product and packhouse photos are our own.</span></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,c){return (c||document).querySelector(s)}, $$=function(s,c){return [].slice.call((c||document).querySelectorAll(s))};
+var clamp=function(v,lo,hi){return Math.min(hi,Math.max(lo,v))};
+var smooth=function(p,e0,e1){var t=clamp((p-e0)/(e1-e0),0,1);return t*t*(3-2*t)};
+var REDUCE=matchMedia('(prefers-reduced-motion: reduce)');
+
+/* split headlines into word spans, with the full sentence kept for screen readers */
+$$('.split').forEach(function(el){
+  var text=el.textContent.trim(), words=text.split(' ');
+  el.textContent='';
+  var sr=document.createElement('span'); sr.className='sr'; sr.textContent=text; el.appendChild(sr);
+  var vis=document.createElement('span'); vis.setAttribute('aria-hidden','true');
+  words.forEach(function(w,i){
+    var s=document.createElement('span'); s.className='w'; s.textContent=w;
+    s.style.setProperty('--th',(i/words.length*0.5).toFixed(3));
+    vis.appendChild(s); if(i<words.length-1) vis.appendChild(document.createTextNode(' '));
+  });
+  el.appendChild(vis);
+});
+
+/* ---------- hero scrub ---------- */
+var hero=$('.hero'), stage=$('.stage'), video=$('#heroVideo'), poster=$('.poster'), cue=$('.cue'), nav=$('.nav');
+var bands=$$('.band').map(function(el,i,all){
+  var a=+el.dataset.a,b=+el.dataset.b;
+  return {el:el,a:a,b:b,first:i===0,last:i===all.length-1,ramp:+el.dataset.ramp||Math.min(0.03,(b-a)*0.35),op:-1,k:-1,on:null};
+});
+var target=0, shown=0, rafId=null, lastTick=0, heroOnScreen=true, loadK=0, loadStart=0;
+var seekBusy=false, pendingTime=null, inited=false, scrubOn=false, cueGone=null;
+
+function heroProgress(){
+  var range=hero.offsetHeight-innerHeight;
+  return range>0?clamp((scrollY-hero.offsetTop)/range,0,1):0;
+}
+function requestSeek(t){
+  if(!video.duration) return;
+  t=clamp(t,0,video.duration-0.04);
+  if(seekBusy){pendingTime=t;return}
+  if(Math.abs(video.currentTime-t)<0.01) return;
+  seekBusy=true; video.currentTime=t;
+}
+video.addEventListener('seeked',function(){
+  seekBusy=false;
+  if(pendingTime!==null){var t=pendingTime;pendingTime=null;requestSeek(t)}
+});
+video.addEventListener('error',function(){seekBusy=false;pendingTime=null;failVideo()});
+
+function updateCaptions(p){
+  bands.forEach(function(b){
+    var f=Math.min(0.02,(b.b-b.a)/3);
+    var op=(b.first?1:smooth(p,b.a,b.a+f))*(b.last?1:1-smooth(p,b.b-f,b.b));
+    if(b.first&&p>b.b) op=0;
+    if(b.last&&p<b.a) op=0;
+    var k=clamp((p-b.a)/b.ramp,0,1);
+    if(b.first) k=Math.max(k,loadK);
+    if(Math.abs(op-b.op)>0.008||(op===0&&b.op!==0)||(op===1&&b.op!==1)){b.op=op;b.el.style.opacity=op.toFixed(3)}
+    if(Math.abs(k-b.k)>0.008||(k===1&&b.k!==1)||(k===0&&b.k!==0)){b.k=k;b.el.style.setProperty('--k',k.toFixed(3))}
+    var on=op>0.5; if(on!==b.on){b.on=on;b.el.classList.toggle('on',on)}
+  });
+  var gone=p>0.04; if(gone!==cueGone){cueGone=gone;cue.classList.toggle('gone',gone)}
+}
+function tick(now){
+  var dt=Math.min(100,now-(lastTick||now)); lastTick=now;
+  shown+=(target-shown)*(1-Math.pow(1-0.16,dt/16.667));
+  var loading=false;
+  if(loadK<1){ if(!loadStart) loadStart=now; var t=clamp((now-loadStart-250)/1300,0,1); loadK=t*t*(3-2*t); loading=true }
+  if(Math.abs(target-shown)<0.0005&&!loading){shown=target;rafId=null;lastTick=0}
+  else rafId=requestAnimationFrame(tick);
+  requestSeek(shown*(video.duration||0));
+  updateCaptions(shown);
+}
+function onScroll(){
+  target=heroProgress();
+  if(rafId===null&&heroOnScreen) rafId=requestAnimationFrame(tick);
+}
+function failVideo(){stage.classList.add('video-failed');stage.classList.remove('video-ready')}
+function initHeroOnce(){
+  if(inited) return; inited=true;
+  poster.style.backgroundImage="url('assets/hero-poster.jpg')";
+  var started=false;
+  function start(){
+    if(started) return; started=true;
+    fetch('assets/hero-scrub.mp4',{priority:'low'}).then(function(r){ if(!r.ok) throw new Error('video'); return r.blob() }).then(function(blob){
+      video.src=URL.createObjectURL(blob); video.load();
+      video.addEventListener('loadeddata',function(){ requestSeek(heroProgress()*video.duration); stage.classList.add('video-ready') },{once:true});
+    }).catch(failVideo);
+  }
+  var img=new Image(); img.onload=start; img.onerror=start; img.src='assets/hero-poster.jpg';
+  setTimeout(start,4000);
+}
+var GATES=[
+  '(max-width: 720px)',
+  '(orientation: portrait) and (max-width: 1024px)',
+  '(orientation: portrait) and (pointer: coarse)',
+  '(orientation: landscape) and (pointer: coarse) and (max-height: 560px)',
+  '(prefers-reduced-motion: reduce)'
+];
+function enableScrub(){
+  if(scrubOn) return; scrubOn=true;
+  initHeroOnce();
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',onScroll,{passive:true});
+  bands.forEach(function(b){b.op=-1;b.k=-1;b.on=null});
+  shown=target=heroProgress();
+  updateCaptions(shown);
+  if(rafId===null) rafId=requestAnimationFrame(tick);
+}
+function disableScrub(){
+  if(!scrubOn) return; scrubOn=false;
+  removeEventListener('scroll',onScroll); removeEventListener('resize',onScroll);
+  if(rafId!==null){cancelAnimationFrame(rafId);rafId=null;lastTick=0}
+}
+function applyHeroMode(){ if(GATES.some(function(q){return matchMedia(q).matches})) disableScrub(); else enableScrub() }
+var MQLS=GATES.map(function(q){return matchMedia(q)});
+MQLS.forEach(function(m){m.addEventListener('change',applyHeroMode)});
+applyHeroMode();
+
+new IntersectionObserver(function(es){
+  heroOnScreen=es[0].isIntersecting;
+  nav.classList.toggle('solid',!heroOnScreen);
+  if(heroOnScreen&&scrubOn) onScroll();
+},{rootMargin:'-70px 0px 0px 0px'}).observe(hero);
+
+/* ---------- section entrances, with the stagger retired afterwards ---------- */
+var countersDone=false;
+function runCounters(){
+  if(countersDone) return; countersDone=true;
+  $$('[data-count]').forEach(function(el){
+    var end=+el.dataset.count;
+    if(REDUCE.matches){el.textContent=end.toLocaleString('en-GB');return}
+    var t0=performance.now(), last='';
+    (function step(now){
+      var t=clamp((now-t0)/1500,0,1), v=Math.round(end*(1-Math.pow(1-t,3))).toLocaleString('en-GB');
+      if(v!==last){last=v;el.textContent=v}
+      if(t<1) requestAnimationFrame(step);
+    })(t0);
+  });
+}
+var io=new IntersectionObserver(function(es){
+  es.forEach(function(e){
+    if(!e.isIntersecting) return;
+    e.target.classList.add('in'); io.unobserve(e.target);
+    if(e.target.closest('.stats')) runCounters();
+    setTimeout(function(){e.target.classList.add('done')},1600);
+  });
+},{threshold:0.14});
+$$('.rv').forEach(function(el){io.observe(el)});
+
+/* ---------- the root line ---------- */
+var main=$('main'), rootSvg=$('.root'), live=$('.root .live'), ghost=$('.root .ghost'), rootLen=0, rootShown=-1, rootRaf=null;
+function buildRoot(){
+  var h=main.offsetHeight, d='M22 0', y=0, i=0;
+  while(y<h){ var ny=Math.min(h,y+230), x=i%2?34:10; d+=' C22 '+(y+80)+','+x+' '+(ny-90)+','+(i%2?26:18)+' '+ny; y=ny; i++ }
+  rootSvg.setAttribute('viewBox','0 0 44 '+h);
+  live.setAttribute('d',d); ghost.setAttribute('d',d);
+  rootLen=live.getTotalLength(); live.style.strokeDasharray=rootLen; rootShown=-1; drawRoot();
+}
+function drawRoot(){
+  rootRaf=null;
+  var p=REDUCE.matches?1:clamp((scrollY+innerHeight*0.6-main.offsetTop)/main.offsetHeight,0,1);
+  if(Math.abs(p-rootShown)<0.002) return;
+  rootShown=p; live.style.strokeDashoffset=(rootLen*(1-p)).toFixed(1);
+}
+function rootScroll(){ if(rootRaf===null) rootRaf=requestAnimationFrame(drawRoot) }
+buildRoot();
+addEventListener('scroll',rootScroll,{passive:true});
+addEventListener('resize',function(){clearTimeout(buildRoot.t);buildRoot.t=setTimeout(buildRoot,200)});
+addEventListener('load',buildRoot);
+REDUCE.addEventListener('change',function(){ rootShown=-1; drawRoot(); applyHeroMode() });
+
+/* ---------- season calendar ---------- */
+var MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var FULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var CROPS={sweet:{name:'sweet potato',m:[7,8,9,10,11,12,1,2]},onion:{name:'dry onions',m:[5,6,7]},beans:{name:'green beans',m:[9,10,11,12,1,2,3]}};
+var monthsEl=$('.months'), calOut=$('#calOut'), calBtn=$('#calBtn'), productSel=$('select[name=product]'), windowIn=$('input[name=window]');
+var picked=null;
+MONTHS.forEach(function(m,i){
+  var b=document.createElement('button'); b.type='button'; b.textContent=m; b.setAttribute('aria-label',FULL[i]); b.setAttribute('aria-pressed','false');
+  b.addEventListener('click',function(){pick(i+1)}); monthsEl.appendChild(b);
+});
+$$('.crow').forEach(function(row){
+  var t=$('.track',row), c=CROPS[row.dataset.c];
+  for(var i=1;i<=12;i++){var cell=document.createElement('i'); if(c.m.indexOf(i)>-1) cell.className='s'; t.appendChild(cell)}
+});
+function pick(n){
+  picked=n;
+  $$('button',monthsEl).forEach(function(b,i){b.setAttribute('aria-pressed',i===n-1?'true':'false')});
+  $$('.track').forEach(function(t){$$('i',t).forEach(function(c,i){c.classList.toggle('now',i===n-1)})});
+  var list=Object.keys(CROPS).filter(function(k){return CROPS[k].m.indexOf(n)>-1}).map(function(k){return CROPS[k].name});
+  if(list.length){
+    var s=list.length>1?list.slice(0,-1).join(', ')+' and '+list[list.length-1]:list[0];
+    calOut.textContent='In '+FULL[n-1]+' we ship '+s+'.';
+    calBtn.textContent='Quote for '+FULL[n-1];
+  }else{
+    calOut.textContent=FULL[n-1]+' is between seasons. Ask us about the months either side.';
+    calBtn.textContent='Request a quote';
+  }
+}
+pick(new Date().getMonth()+1);
+calBtn.addEventListener('click',function(){ if(picked&&!windowIn.value) windowIn.value=FULL[picked-1] });
+$$('[data-pick]').forEach(function(a){a.addEventListener('click',function(){productSel.value=a.dataset.pick})});
+
+/* ---------- quote form: opens the visitor's email app ---------- */
+var form=$('#quoteForm'), sent=$('#sent');
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  if(!form.checkValidity()){form.reportValidity();return}
+  var f=new FormData(form), g=function(k){return (f.get(k)||'').toString().trim()};
+  var body=['Product: '+g('product'),'Volume: '+g('volume'),'Destination: '+g('destination'),'Delivery window: '+g('window'),'','Name: '+g('name'),'Company: '+g('company'),'Email: '+g('email'),'','Spec or notes:',g('notes')].join('\n');
+  location.href='mailto:info@agrogreen.co.uk?subject='+encodeURIComponent('Quote request: '+g('product')+' for '+g('company'))+'&body='+encodeURIComponent(body);
+  sent.hidden=false; requestAnimationFrame(function(){sent.classList.add('show')});
+});
+
+document.addEventListener('visibilitychange',function(){document.body.classList.toggle('paused',document.hidden)});
+})();
+</script>
+</body>
+</html>
