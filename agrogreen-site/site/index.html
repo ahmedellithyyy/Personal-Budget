@@ -108,6 +108,15 @@ p{margin:0}
   .static-copy h1{font-size:clamp(2.7rem,12vw,4.4rem);font-weight:800}
   .static-copy p{margin:.8em 0 1.3em;max-width:34ch;font-size:1.08rem}
   .static-copy .btn{text-shadow:none}
+  .journey{height:auto}
+  .journey::before{display:none}
+  .jstage{position:static;height:auto;display:block;overflow:visible;padding:clamp(64px,10vw,110px) var(--gutter)}
+  .jlist{display:grid;gap:34px;margin-top:30px}
+  .js{position:static;opacity:1;pointer-events:auto;grid-template-columns:1fr;gap:16px}
+  .js figure{height:auto;aspect-ratio:16/10}
+  .js img{transform:none}
+  .js .tx>*{opacity:1;transform:none}
+  .jtrack{display:none}
 }
 
 /* layout below the hero */
@@ -188,18 +197,44 @@ section{position:relative;padding:clamp(72px,11vw,150px) 0}
 .out .btn:hover{background:#fff}
 @media (max-width:760px){.months{grid-template-columns:repeat(6,1fr)}.crow{grid-template-columns:1fr}}
 
-/* process */
-.steps{counter-reset:s;display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.8vw,22px);margin-top:clamp(32px,5vw,60px)}
-.step{counter-increment:s;position:relative}
-.step .ph{aspect-ratio:3/4;border-radius:18px;overflow:hidden}
-.step img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
-.step:hover img{transform:scale(1.05)}
-.step:nth-child(even){margin-top:46px}
-.step h3{margin-top:16px}
-.step h3::before{content:"0" counter(s);font:400 .78rem/1 var(--mono);letter-spacing:.12em;color:var(--accent);display:block;margin-bottom:.7em}
-.step p{color:var(--text-secondary);margin-top:.4em;font-size:.98rem}
-@media (max-width:900px){.steps{grid-template-columns:1fr 1fr}.step:nth-child(even){margin-top:0}}
-@media (max-width:480px){.steps{grid-template-columns:1fr}.step .ph{aspect-ratio:16/10}}
+/* journey: soil to ship, driven by scroll */
+.journey{position:relative;height:560vh;padding:0;background:#2A1A0E;color:var(--cream)}
+.journey::before{content:"";position:absolute;inset:0 0 auto 0;height:26vh;background:linear-gradient(#8a4f1c,#2A1A0E);pointer-events:none}
+.jstage{position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:clamp(12px,2.4vh,26px);padding:88px var(--gutter) 22px}
+.jhead{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.jhead h2{font-size:clamp(1.7rem,3.4vw,2.9rem)}
+.jhead .kick{color:#F0B48A;margin-bottom:.7em}
+.jhead p{color:rgba(251,243,223,.8);max-width:36ch;font-size:.98rem}
+.jlist{position:relative;min-height:0}
+.js{position:absolute;inset:0;display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(20px,4vw,64px);align-items:center;opacity:0;pointer-events:none;transition:opacity .7s var(--ease)}
+.js.on{opacity:1;pointer-events:auto}
+.js figure{margin:0;height:100%;min-height:0;border-radius:24px;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.8)}
+.js img{width:100%;height:100%;object-fit:cover;transform:scale(1.14) translateY(calc((var(--t,.5) - .5)*-7%));will-change:transform}
+.js .tx>*{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.js.on .tx>*{opacity:1;transform:none}
+.js.on .tx>*:nth-child(2){transition-delay:.08s}
+.js.on .tx>*:nth-child(3){transition-delay:.16s}
+.js .mono{color:#F0B48A}
+.js h3{font:800 clamp(1.8rem,3.6vw,3.3rem)/1.03 var(--display);letter-spacing:-.025em;margin:.45em 0 .4em}
+.js p{color:rgba(251,243,223,.86);font-size:clamp(1rem,1.3vw,1.2rem);max-width:30ch}
+.jtrack{position:relative;height:132px}
+.jline{position:absolute;left:0;right:0;bottom:30px;height:10px;border-radius:6px;background:repeating-linear-gradient(90deg,rgba(251,243,223,.34) 0 14px,rgba(251,243,223,.12) 14px 28px);background-position:var(--belt,0px) 0}
+.jdot{position:absolute;bottom:0;transform:translateX(-50%);font:400 .72rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(251,243,223,.62);transition:color .4s var(--ease)}
+.jdot::before{content:"";position:absolute;left:50%;bottom:29px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#2A1A0E;border:2px solid rgba(251,243,223,.6);transition:background .4s var(--ease),border-color .4s var(--ease),transform .4s var(--ease)}
+.jdot.past::before{background:rgba(251,243,223,.6)}
+.jdot.on{color:var(--cream)}
+.jdot.on::before{background:#E07A3A;border-color:#E07A3A;transform:scale(1.35)}
+.jsprite{position:absolute;left:0;bottom:40px;will-change:transform,opacity}
+.jpot{width:88px;height:52px;margin-left:-44px}
+.jbox{width:124px;height:84px;margin-left:-62px;opacity:0}
+.jcon{width:250px;height:105px;margin-left:-86px;opacity:0}
+.jsprite svg{display:block;width:100%;height:100%;overflow:visible}
+.jspray{position:absolute;bottom:52px;width:70px;height:46px;margin-left:-35px;opacity:0;transition:opacity .5s var(--ease)}
+.jtrack[data-stage="1"] .jspray{opacity:1}
+.jspray i{position:absolute;top:0;width:2px;height:16px;border-radius:2px;background:#9ED3E6;animation:spray 0.9s linear infinite}
+.jspray i:nth-child(1){left:8px}.jspray i:nth-child(2){left:24px;animation-delay:-.3s}.jspray i:nth-child(3){left:40px;animation-delay:-.6s}.jspray i:nth-child(4){left:56px;animation-delay:-.15s}
+@keyframes spray{from{transform:translateY(0);opacity:.9}to{transform:translateY(30px);opacity:0}}
+@media (max-height:640px){.jhead p{display:none}.jtrack{height:84px}}
 
 /* standards */
 .std{background:var(--deep);color:var(--cream)}
@@ -319,6 +354,27 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <main id="main" tabindex="-1">
   <svg class="root" aria-hidden="true" preserveAspectRatio="none"><path class="ghost"/><path class="live"/></svg>
 
+  <section class="journey" id="process" aria-label="From soil to ship">
+    <div class="jstage">
+      <div class="jhead"><div><span class="mono kick">Process</span><h2>From soil to ship.</h2></div><p>Follow one sweet potato from our field to your order. Every photo here is our own crop, line and team.</p></div>
+      <div class="jlist">
+        <article class="js on"><figure><img src="assets/j-lift.jpg" alt="Agro Green crews lifting sweet potatoes in the field" width="1290" height="1090"></figure><div class="tx"><span class="mono">01 / 05 Lift</span><h3>Lifted from the field.</h3><p>Our crews lift the crop by hand once it is ready.</p></div></article>
+        <article class="js"><figure><img src="assets/j-wash.jpg" alt="Sweet potatoes passing under water sprays on the washing line" loading="lazy" width="1290" height="855"></figure><div class="tx"><span class="mono">02 / 05 Wash</span><h3>Cured, washed and dried.</h3><p>Sweet potato is cured, then washed and dried on the line.</p></div></article>
+        <article class="js"><figure><img src="assets/j-sort.jpg" alt="Agro Green staff checking sweet potatoes on the sorting belt" loading="lazy" width="810" height="540"></figure><div class="tx"><span class="mono">03 / 05 Sort</span><h3>Sorted and graded by hand.</h3><p>Our team checks the roots on the sorting belt.</p></div></article>
+        <article class="js"><figure><img style="object-position:50% 92%" src="assets/j-pack.jpg" alt="Sweet potatoes packed in green Agro Green cartons" loading="lazy" width="1290" height="1436"></figure><div class="tx"><span class="mono">04 / 05 Pack</span><h3>Packed in our cartons.</h3><p>Weighed and packed by our own team into Agro Green boxes.</p></div></article>
+        <article class="js"><figure><img src="assets/j-ship.jpg" alt="Bulk bins of sweet potatoes strapped and ready in the Agro Green store" loading="lazy" width="1280" height="854"></figure><div class="tx"><span class="mono">05 / 05 Ship</span><h3>Chilled and shipped.</h3><p>Held at 14°C or below, then shipped by air or sea.</p></div></article>
+      </div>
+      <div class="jtrack" aria-hidden="true">
+        <div class="jline"></div>
+        <span class="jdot" style="left:14.8%">Lift</span><span class="jdot" style="left:32.4%">Wash</span><span class="jdot" style="left:50%">Sort</span><span class="jdot" style="left:67.6%">Pack</span><span class="jdot" style="left:85.2%">Ship</span>
+        <div class="jspray" style="left:32.4%"><i></i><i></i><i></i><i></i></div>
+        <div class="jsprite jcon"><svg viewBox="0 0 176 74"><rect x="2" y="4" width="150" height="56" rx="4" fill="#1F5A3A"/><g stroke="#17402A" stroke-width="3"><path d="M20 8v48M38 8v48M56 8v48M74 8v48M92 8v48M110 8v48M128 8v48"/></g><rect x="2" y="4" width="150" height="56" rx="4" fill="none" stroke="#FBF3DF" stroke-opacity=".5" stroke-width="1.5"/><circle cx="30" cy="66" r="7" fill="#0F2E1D" stroke="#FBF3DF" stroke-opacity=".5"/><circle cx="124" cy="66" r="7" fill="#0F2E1D" stroke="#FBF3DF" stroke-opacity=".5"/></svg></div>
+        <div class="jsprite jbox"><svg viewBox="0 0 86 58"><g class="jfill"><ellipse cx="24" cy="18" rx="15" ry="8" fill="#C9652B"/><ellipse cx="46" cy="14" rx="16" ry="8" fill="#D6753A"/><ellipse cx="64" cy="19" rx="14" ry="7" fill="#C9652B"/></g><path d="M4 18h78l-5 38H9z" fill="#2F8F4E"/><path d="M4 18h78l-1.200 9H5.200z" fill="#257A40"/><rect x="30" y="34" width="26" height="9" rx="4.500" fill="#17402A"/></svg></div>
+        <div class="jsprite jpot"><svg viewBox="0 0 58 34"><path d="M2 17C10 4 22 1 31 2c12 1 21 8 25 15-5 9-14 14-25 15C20 33 9 29 2 17z" fill="#C9652B"/><path d="M12 13c7-6 16-7 24-5" fill="none" stroke="#F0B48A" stroke-width="2.500" stroke-linecap="round" opacity=".7"/><circle cx="36" cy="21" r="1.300" fill="#7F3210"/><circle cx="22" cy="23" r="1.300" fill="#7F3210"/></svg></div>
+      </div>
+    </div>
+  </section>
+
   <div class="stats">
     <div class="wrap grid rv">
       <div class="part"><b><span data-count="5000">5,000</span></b><span>acres of farms on sand soil</span></div>
@@ -366,18 +422,6 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
           <div class="crow" data-c="beans"><span class="name">Green beans</span><div class="track" aria-hidden="true"></div></div>
         </div>
         <div class="out part"><p id="calOut" aria-live="polite"></p><a class="btn" href="#quote" id="calBtn">Request a quote</a></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="produce" id="process">
-    <div class="wrap">
-      <div class="rv"><span class="mono kick part">Process</span><h2 class="part">From field to port, in our hands.</h2></div>
-      <div class="steps rv">
-        <div class="step part"><div class="ph"><img src="assets/o-grow.jpg" alt="Planting beds in sand soil at an Agro Green farm" loading="lazy" width="905" height="578"></div><h3>Grow</h3><p>Planted in sand soil on our own farms.</p></div>
-        <div class="step part"><div class="ph"><img src="assets/o-cure.jpg" alt="Sweet potatoes in crates with a temperature monitor" loading="lazy" width="1200" height="900"></div><h3>Cure, wash and dry</h3><p>Sweet potato is cured, then washed and dried on the line.</p></div>
-        <div class="step part"><div class="ph"><img src="assets/o-pack.jpg" alt="Agro Green staff packing produce into branded cartons" loading="lazy" width="1200" height="900"></div><h3>Grade and pack</h3><p>Packed by our own team, in boxes chosen for the product.</p></div>
-        <div class="step part"><div class="ph"><img src="assets/o-chill.jpg" alt="Packed cartons stacked in the Agro Green cold store" loading="lazy" width="1024" height="768"></div><h3>Chill and ship</h3><p>Held at 14°C or below, then shipped by air or sea.</p></div>
       </div>
     </div>
   </section>
@@ -565,6 +609,49 @@ new IntersectionObserver(function(es){
   nav.classList.toggle('solid',!heroOnScreen);
   if(heroOnScreen&&scrubOn) onScroll();
 },{rootMargin:'-70px 0px 0px 0px'}).observe(hero);
+
+/* ---------- journey: one sweet potato from soil to ship ---------- */
+var jr=$('.journey'), jst=$$('.js'), jtrack=$('.jtrack'), jpot=$('.jpot'), jbox=$('.jbox'), jfill=$('.jfill'), jcon=$('.jcon'), jdots=$$('.jdot');
+var jT=0, jS=0, jRaf=null, jIdx=-1, jLast=-1;
+function jProg(){var r=jr.offsetHeight-innerHeight;return r>0?clamp(-jr.getBoundingClientRect().top/r,0,1):0}
+function jDraw(p){
+  if(Math.abs(p-jLast)<0.0003) return; jLast=p;
+  var W=jtrack.clientWidth, X=function(q){return W*(0.06+0.88*q)};
+  var idx=Math.min(4,Math.floor(p*5));
+  if(idx!==jIdx){
+    jIdx=idx;
+    jst.forEach(function(el,i){el.classList.toggle('on',i===idx)});
+    jdots.forEach(function(d,i){d.classList.toggle('on',i===idx);d.classList.toggle('past',i<idx)});
+    jtrack.dataset.stage=idx;
+  }
+  jst[idx].style.setProperty('--t',(p*5-idx).toFixed(3));
+  var drop=clamp(p/0.07,0,1), dy=-(1-drop*drop)*innerHeight*0.62;
+  var hop=-Math.abs(Math.sin(p*14*Math.PI))*7*drop;
+  var inBox=smooth(p,0.655,0.705);
+  jpot.style.transform='translate('+X(Math.min(p,0.7)).toFixed(1)+'px,'+(dy+hop*(1-inBox)-inBox*18).toFixed(1)+'px) rotate('+(p*1700).toFixed(0)+'deg) scale('+(1-0.5*inBox).toFixed(3)+')';
+  jpot.style.opacity=(1-smooth(p,0.70,0.72)).toFixed(3);
+  var inCon=smooth(p,0.895,0.94);
+  jbox.style.opacity=(smooth(p,0.52,0.58)*(1-inCon)).toFixed(3);
+  jbox.style.transform='translate('+(X(0.7+0.2*smooth(p,0.75,0.9))+inCon*26).toFixed(1)+'px,0) scale('+(1-0.35*inCon).toFixed(3)+')';
+  jfill.style.opacity=smooth(p,0.69,0.72).toFixed(3);
+  jcon.style.opacity=smooth(p,0.74,0.80).toFixed(3);
+  jcon.style.transform='translate('+(X(0.9)+smooth(p,0.955,1)*W*0.07).toFixed(1)+'px,0)';
+  jtrack.style.setProperty('--belt',(-p*1100).toFixed(0)+'px');
+}
+function jTick(){
+  jS+=(jT-jS)*0.2;
+  if(Math.abs(jT-jS)<0.0004){jS=jT;jRaf=null} else jRaf=requestAnimationFrame(jTick);
+  jDraw(jS);
+}
+function jScroll(){
+  if(!scrubOn) return;
+  jT=jProg();
+  if(jRaf===null) jRaf=requestAnimationFrame(jTick);
+}
+addEventListener('scroll',jScroll,{passive:true});
+addEventListener('resize',function(){jLast=-1;jScroll()},{passive:true});
+MQLS.forEach(function(m){m.addEventListener('change',function(){jLast=-1;jIdx=-1;jScroll()})});
+if(scrubOn){jS=jT=jProg();jDraw(jS)}
 
 /* ---------- section entrances, with the stagger retired afterwards ---------- */
 var countersDone=false;
