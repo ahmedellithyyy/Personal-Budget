@@ -65,7 +65,7 @@ p{margin:0}
 .nav img{height:38px;width:auto;filter:drop-shadow(0 1px 6px rgba(28,14,4,.6))}
 .nav ul{display:flex;gap:clamp(12px,2.2vw,30px);list-style:none;margin:0;padding:0;align-items:center}
 .nav a.l{text-decoration:none;font-weight:600;font-size:.95rem;text-shadow:0 1px 8px rgba(28,14,4,.7);padding:10px 2px;background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat;transition:background-size .35s var(--ease)}
-.nav a.l:hover{background-size:100% 1.5px}
+.nav a.l:hover,.nav a.l[aria-current]{background-size:100% 1.5px}
 .nav .btn{padding:.7em 1.1em;font-size:.92rem}
 @media (max-width:820px){.nav li.h{display:none}}
 
@@ -268,6 +268,7 @@ body.paused *,body.paused *::before,body.paused *::after{animation-play-state:pa
 <nav class="nav" aria-label="Main">
   <a href="#top" aria-label="Agro Green, back to top"><img src="assets/logo.png" alt="Agro Green" width="624" height="206"></a>
   <ul>
+    <li class="h"><a class="l" href="#why">Why sand</a></li>
     <li class="h"><a class="l" href="#produce">Produce</a></li>
     <li class="h"><a class="l" href="#season">Season</a></li>
     <li class="h"><a class="l" href="#process">Process</a></li>
@@ -654,6 +655,18 @@ form.addEventListener('submit',function(e){
   location.href='mailto:info@agrogreen.co.uk?subject='+encodeURIComponent('Quote request: '+g('product')+' for '+g('company'))+'&body='+encodeURIComponent(body);
   sent.hidden=false; requestAnimationFrame(function(){sent.classList.add('show')});
 });
+
+/* ---------- menu: mark the section in view ---------- */
+var links=$$('.nav a.l'), spyIds=links.map(function(l){return l.getAttribute('href').slice(1)}).concat(['faq','quote']), spyCur=null, spyRaf=null;
+function spy(){
+  spyRaf=null;
+  var line=scrollY+innerHeight*0.35, cur=null;
+  spyIds.forEach(function(id){var el=document.getElementById(id); if(el&&el.getBoundingClientRect().top+scrollY<=line) cur=id});
+  if(cur===spyCur) return; spyCur=cur;
+  links.forEach(function(l){ if(l.getAttribute('href')==='#'+cur) l.setAttribute('aria-current','true'); else l.removeAttribute('aria-current') });
+}
+addEventListener('scroll',function(){ if(spyRaf===null) spyRaf=requestAnimationFrame(spy) },{passive:true});
+spy();
 
 document.addEventListener('visibilitychange',function(){document.body.classList.toggle('paused',document.hidden)});
 })();
