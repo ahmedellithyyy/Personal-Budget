@@ -43,3 +43,7 @@ Blocker: the Higgsfield connector in the first session was read-only (balance, m
 
 ## Source assets
 `source-assets/` holds the 67 images from the old site. Logo is 624x206 PNG. Best large photo is `slider/slider-1.jpg` at 2400x1200. Team photos are 149x149 and too small to reuse.
+
+## Correction from the owner, 2026-11-17
+- The sweet potato fields are dark soil. The old site's sand soil claim is wrong and has been removed from the new site.
+- The hero video still shows golden sandy soil and needs regenerating with dark soil when credits allow.
